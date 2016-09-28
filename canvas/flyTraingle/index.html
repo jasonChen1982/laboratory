@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>Russia Humor</title>
+    <style type="text/css">
+    html, body, span, div, p, a, table, tbody, td, h1, h2, h3, h4, h5, h6, img, form, font, strong, b, i, dl, dt, dd, ol, ul, li, dl, dd, dt, iframe, label, blockquote, input, button {padding:0;margin:0;list-style: none;}
+    body {
+        background: #090909;
+        overflow: hidden;
+    }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script type="text/javascript" src="./js/TweenMax.min.js"></script>
+<script type="text/javascript" src="./js/minMartix.js"></script>
+<script type="text/javascript" src="./js/mini.js"></script>
+<script type="text/javascript">
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
+            window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+    window.RAF = window.requestAnimationFrame;
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+
+    var stage = new Stage('canvas');
+    stage.perspective(0, W/H, .1, 1000);
+    stage.lookAt([0.0, 0.0, 5.0], [0, 0, 0], [0, 1, 0]);
+    stage.resize(W,H);
+
+    var Triangles = [];
+
+
+    for(var ii=10;ii<100;ii++){
+        Triangles[ii] = new Triangle();
+        Triangles[ii].init();
+        Triangles[ii].position.rect(W,H);//randomPos(H>W?H:W);// 
+
+        stage.addChild(Triangles[ii]);
+    }
+
+    // TweenMax.to($('#icon_deuce'), 1, {css:{ display: 'inline-block', autoAlpha: 1}, delay: 0});
+
+
+
+    render();
+    var aaa = 10,speed = 1;
+    function render(){
+        if(aaa<=10){
+            speed = .2;
+        }
+        if(aaa>100){
+            speed = -.2;
+        }
+        aaa+=speed;
+        // Triangles[10].rotate.x++;
+        stage.perspective(aaa, W/H, .1, 1000);
+        stage.render();
+        RAF(render);
+    }
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<html>
+<head>
+    <title>wgld.org WebGL sample 014</title>
+    <script type="text/javascript">
+    (function() {
+        var UI = {
+            VOH: 'width',
+            DsgSize: 640,
+            root: document.getElementsByTagName('html')[0],
+            needPut: false,
+            ucHole: 1,
+            resolution: Math.min(2,window.devicePixelRatio),
+            rem: 100,
+            monitoring: false,
+            isUC: /uc/i.test(window.navigator.userAgent)
+        };
+
+        UI.init = function(opts) {
+            opts = opts || {};
+            this.VOH = opts.VOH || 'width';
+            this.DsgSize = opts.DsgSize || 640;
+            this.rem = opts.rem || 100;
+            this.resolution = opts.resolution || this.resolution;
+            this.meta = this.meta || document.querySelector('meta[name="viewport"]');
+            this._putMeta();
+        };
+        UI._putMeta = function() {
+            if (!this.meta) {
+                this.meta = document.createElement('meta');
+                this.meta.setAttribute('name', 'viewport');
+                this.needPut = true;
+            }
+            var ratio = 1/this.resolution;
+            this.meta.setAttribute('content', 'width=device-width,initial-scale='+ratio+', maximum-scale='+ratio+', minimum-scale='+ratio+', user-scalable=no');
+            if (this.needPut) {
+                this.root.firstElementChild.appendChild(this.meta);
+                this.needPut = false;
+            }
+            this.suit();
+            this._ears();
+        };
+        UI._ears = function() {
+            if (this.monitoring) return;
+            var This = this;
+            window.addEventListener('resize', function() {
+                This.suit();
+            }, false);
+            document.addEventListener("DOMContentLoaded", function() {
+                This.isUC && This._fillHole();
+            });
+            setTimeout(function() {
+                This.suit();
+            }, 100);
+            this.monitoring = true;
+        };
+        UI._fillHole = function() {
+            var dom = document.createElement('div'),
+                sPX = 100,
+                tPX = 100;
+            dom.style.fontSize = sPX + "px";
+            document.body.appendChild(dom);
+            tPX = parseInt(window.getComputedStyle(dom, null).fontSize) || tPX;
+
+            this.ucHole = sPX / tPX;
+
+            this.suit();
+
+            setTimeout(function() {
+                document.body.removeChild(dom);
+            }, 100);
+        };
+        UI.suit = function() {
+            var nowSize = this.VOH === 'width' ? document.documentElement.offsetWidth : document.documentElement.offsetWidth;
+            this.sPPR = this.rem * nowSize / this.DsgSize;
+            this.curPPR = this.ucHole * this.sPPR;
+            this.root.style.fontSize = this.curPPR + 'px';
+        };
+        UI.RTP = function(rem, bool) {
+            return (bool ? rem * this.curPPR : rem * this.sPPR) >> 0;
+        };
+        UI.PTR = function(px) {
+            return px / this.curPPR;
+        };
+
+        window.JC = window.JC || {};
+        window.JC.UI = UI;
+    })();
+    window.JC.UI.init();
+    </script>
+    <style type="text/css">
+    html,
+    body,
+    div,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    img,
+    b,
+    i,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border: 0;
+        outline: 0;
+    }
+    
+    article,
+    section {
+        display: block;
+    }
+    
+    html {
+        font-size: 50px;
+        height: 100%;
+    }
+    
+    body {
+        font-family: 'Arial';
+        font-size: .24rem;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #000000;
+        -webkit-user-select: none;
+        -webkit-text-size-adjust: none;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    #canvas {
+        position: absolute;
+        left: 50%;
+        top: 45%;
+        width: 4.2rem;
+        height: 4.2rem;
+        margin: -2.1rem 0 0 -2.1rem;
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="420" height="420"></canvas>
+    <script type="text/javascript" src="./js/jcc2d.js"></script>
+    <script type="text/javascript">
+        var stage = new JC.Stage('canvas'),
+            w = stage.width,
+            h = stage.height,
+            bg,
+            DTR = Math.PI/180,
+            TWO_PI = Math.PI*2,
+            DOC = new JC.Container(),
+            grap = new JC.Graphics();
+            DOC.x = w/2;
+            DOC.y = h/2;
+
+            stage.autoClear = false;
+
+
+        var Spline = [[0,-89],[1,-88],[3,-88],[5,-87],[7,-86],[8,-85],[9,-84],[11,-82],[18,-58],[25,-36],[26,-30],[25,-24],[24,-19],[22,-14],[14.724,-4.104],[14.182,-2.084],[14.000,-0.000],[14.182,2.084],[14.724,4.104],[22,14],[24,19],[25,24],[26,30],[25,36],[18,58],[11,82],[9,84],[8,85],[7,86],[5,87],[3,88],[1,88],[0,89]];
+
+
+        function isArray(object) {
+            return Object.prototype.toString.call(object) === '[object Array]';
+        }
+
+        function isNumber(object) {
+            return typeof object === 'number';
+        }
+
+        function random(min, max) {
+            if (isArray(min))
+                return min[~~(Math.random() * min.length)];
+            if (!isNumber(max))
+                max = min || 1, min = 0;
+            return min + Math.random() * (max - min);
+        }
+
+        var sin = Math.sin;
+        var cos = Math.cos;
+        var DTR = Math.PI / 180;
+        function Vector3(x, y, z) {
+            this.x = x || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+        }
+        Vector3.prototype.distance = function(vec) {
+            var xx = Math.pow(this.x - vec.x, 2),
+                yy = Math.pow(this.x - vec.x, 2),
+                zz = Math.pow(this.x - vec.x, 2);
+            return Math.sqrt(xx + yy + zz);
+        };
+
+        function Euler(x, y, z) {
+            this.x = x || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+        }
+        Euler.prototype.rotate = function(vec) {
+            var vector = new Vector3();
+            var x = DTR * this.x,
+                y = DTR * this.y,
+                z = DTR * this.z;
+            // var xc = cos(x),
+            //     xs = sin(x);
+            // var yc = cos(y),
+            //     ys = sin(y);
+            // var zc = cos(z),
+            //     zs = sin(z);
+            var te = [];
+            // te[0] = zc*yc-zs*xs*ys;
+            // te[4] = zs*yc+zc*xs*ys;
+            // te[8] = -xc*ys;
+
+            // te[1] = -zs*xc;
+            // te[5] = zc*xc;
+            // te[9] = xs;
+
+            // te[2] = zc*ys+zs*xs*yc;
+            // te[6] = zs*ys-zc*xs*yc;
+            // te[10] = xc*yc;
+
+
+
+
+            var a = Math.cos( x ), b = Math.sin( x );
+            var c = Math.cos( y ), d = Math.sin( y );
+            var e = Math.cos( z ), f = Math.sin( z );
+
+            var ac = a * c, ad = a * d, bc = b * c, bd = b * d;
+
+            te[ 0 ] = c * e;
+            te[ 4 ] = - f;
+            te[ 8 ] = d * e;
+
+            te[ 1 ] = ac * f + bd;
+            te[ 5 ] = a * e;
+            te[ 9 ] = ad * f - bc;
+
+            te[ 2 ] = bc * f - ad;
+            te[ 6 ] = b * e;
+            te[ 10 ] = bd * f + ac;
+
+
+
+
+            te[3] = 0;
+            te[7] = 0;
+            te[11] = 0;
+            // bottom row
+            te[12] = 0;
+            te[13] = 0;
+            te[14] = 0;
+            te[15] = 1;
+
+            vector.z = te[8] * vec.x + te[9] * vec.y + te[10] * vec.z;
+            vector.x = (te[0] * vec.x + te[1] * vec.y + te[2] * vec.z)*(vector.z+600)/600;
+            vector.y = (te[4] * vec.x + te[5] * vec.y + te[6] * vec.z)*(vector.z+600)/600;
+
+            return vector;
+        };
+
+
+
+        function PointCloud(opts){
+            opts = opts || {};
+            this._points = [];
+            this.points = [];
+            this.infor = [];
+            this.speed = window.devicePixelRatio < 1.8 ? 2 : 1;
+            this.num = opts.num||30;
+            this.radius = opts.radius||160;
+            this.color = opts.color||'#f9fbfa';
+            this.euler = new Euler();
+            this.buildMesh();
+        }
+        PointCloud.prototype.buildMesh = function(){
+            for (var i = 0; i < this.num; i++) {
+                var degY = random(0,TWO_PI);
+                var degX = random(TWO_PI/8,TWO_PI*2/5);
+                var radius = random(80,this.radius);
+                var x = sin(degX) * sin(degY) * radius,
+                    y = cos(degX) * radius,
+                    z = sin(degX) * cos(degY) * radius;
+                this._points.push(new Vector3(x, y, z));
+                this.infor[i] = [1,random(0.5,1.8)];
+            }
+        };
+        PointCloud.prototype.upTransform = function(){
+            // this.euler.x = 20;
+            this.euler.y += this.speed;
+            // this.euler.z = -25;
+
+            for (var i = 0; i < this._points.length; i++) {
+                this.points[i] = this.euler.rotate(this._points[i]);
+                var alpha = (this.points[i].z+this.radius)*0.5/this.radius;
+                this.infor[i][0] = alpha;
+            }
+        };
+        PointCloud.prototype.render = function(ctx){
+            ctx.save();
+            ctx.fillStyle = this.color;
+            for (var i = 0; i < this.points.length; i++) {
+                var point = this.points[i];
+                ctx.globalAlpha = this.infor[i][0];
+                ctx.beginPath();
+                ctx.arc(point.x,point.y,this.infor[i][1]*(point.z+600)/600,0,TWO_PI);
+                ctx.fill();
+            }
+            ctx.restore();
+
+        };
+
+        function Text(opts){
+            opts = opts || {};
+            this.font = opts.font||'bold %d Arial';
+            this.text = opts.text||'loading...';
+            this.color = opts.color||'#7fcaea';
+            this.textAlign = "center"; // start left center end right
+            this.textBaseline = "middle"; // top bottom middle alphabetic hanging
+
+            this.US = false; // use stroke
+            this.UF = true; // use fill
+
+            this.x = 0;
+            this.y = 120;
+        }
+        Text.prototype.update = function(pres){
+            pres = pres||0;
+            this.text = pres+'%';
+        };
+        Text.prototype.render = function(ctx){
+            ctx.save();
+            ctx.transform(1,0,0,1,this.x,this.y);
+            ctx.font = this.font.replace('%d',window.JC.UI.RTP(0.28)+'px');
+            ctx.textAlign = this.textAlign;
+            ctx.textBaseline = this.textBaseline;
+            if(this.UF){
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur=20;
+                ctx.shadowColor="rgba(85,200,228,0.2)";
+                ctx.fillText(this.text,0,0);
+            }
+            if(this.US){
+                ctx.lineWidth = this.lineWidth;
+                ctx.strokeStyle = this.color;
+                ctx.strokeText(this.text,0,0);
+            }
+            ctx.restore();
+        };
+
+
+        function Battle(opts){
+            opts = opts || {};
+            this._vertexs = [];
+            this.vertexs = [];
+            this.speed = window.devicePixelRatio < 1.8 ? 2 : 0.8;
+            this.row = opts.row||10;
+            this.spline = opts.spline;
+            this.color = opts.color||'#88b7cf';
+            this.euler = new Euler();
+            this.cricles = [8,10,16,22,24];
+            this.y = -12;
+            this.fx = function(t, b, c, d){  //加速减速曲线
+                if ((t/=d/2) < 1) {
+                    return c/2*t*t + b;
+                }
+                return -c/2 * ((--t)*(t-2) - 1) + b;
+            };
+            this.sy = -16;
+            this.ey = -4;
+            this.MST = Date.now();
+            this.buildMesh();
+        }
+        Battle.prototype.buildMesh = function(){
+            for(var i=0;i<=this.row;i++){
+                var degY = 360*DTR*i/this.row;
+                for (var j = 0; j < this.spline.length; j++) {
+                    var radius = this.spline[j],
+                        x = sin(degY) * radius[0],
+                        y = radius[1],
+                        z = cos(degY) * radius[0];
+                    this._vertexs.push(new Vector3(x, y, z));
+                }
+            }
+        };
+        Battle.prototype.upTransform = function(){
+            this.euler.x = 20;
+            this.euler.y += this.speed;
+            this.euler.z = -25;
+
+            for (var i = 0; i < this._vertexs.length; i++) {
+                this.vertexs[i] = this.euler.rotate(this._vertexs[i]);
+            }
+
+            var now=Date.now()-this.MST;
+            var stop = now>=1600;
+            this.y = this.fx( now , this.sy , this.ey - this.sy , 1600 );
+            if(stop){
+                this.MST = Date.now();
+                var c = this.ey;
+                this.ey = this.sy;
+                this.sy = c;
+            }
+
+        };
+        Battle.prototype.render = function(ctx){
+            var mod = this.spline.length;
+            ctx.save();
+            ctx.transform(1,0,0,1,0,this.y);
+            ctx.beginPath();
+            for (var i = 0; i < this.vertexs.length; i++) {
+                var point = this.vertexs[i];
+                if (i%mod === 0) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            }
+            for (var j = 0; j < this.cricles.length; j++) {
+                var offset = this.cricles[j];
+                for (var k = 0; k <= this.row; k++) {
+                    var index = this.spline.length*k+offset;
+                    var cc = this.vertexs[index];
+                    if (k === 0) {
+                        ctx.moveTo(cc.x, cc.y);
+                    } else {
+                        ctx.lineTo(cc.x, cc.y);
+                    }
+                }
+            }
+            ctx.strokeStyle = this.color;
+            ctx.stroke();
+            ctx.restore();
+
+        };
+
+        var battle = new Battle({
+            spline: Spline
+        });
+        var point = new PointCloud();
+        var text = new Text();
+
+        grap.drawCall(function(ctx){
+
+            ctx.save();
+            ctx.setTransform(1,0,0,1,0,0);
+            ctx.fillStyle = 'hsla(0, 0%, 0%, 0.12)';
+            ctx.fillRect(0,0,stage.width,stage.height);
+            ctx.restore();
+
+            battle.upTransform();
+            battle.render(ctx);
+
+            point.upTransform();
+            point.render(ctx);
+
+            text.render(ctx);
+        });
+
+        setInterval(function(){
+            var pre = (Date.now()/100)%100>>0;
+            text.update(pre);
+        },100);
+
+
+
+        var images = new JC.ImagesLoad({
+            bg: './img/bg.jpg'
+        });
+
+        images.imagesLoaded = function(){
+            bg = new JC.Sprite({
+                image: images.getResult('bg')
+            });
+
+            DOC.addChilds(grap);
+            stage.addChilds(DOC);
+
+            render();
+        };
+
+        function render(){
+            RAF(render);
+
+            stage.render();
+        }
+    </script>
+</body>
+</html>
+

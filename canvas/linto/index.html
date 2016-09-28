@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>Russia Humor</title>
+    <style type="text/css">
+    html, body, span, div, p, a, table, tbody, td, h1, h2, h3, h4, h5, h6, img, form, font, strong, b, i, dl, dt, dd, ol, ul, li, dl, dd, dt, iframe, label, blockquote, input, button {padding:0;margin:0;list-style: none;}
+    body {
+        background: url(./images/bg.jpg) center;
+        background-size: cover;
+        overflow: hidden;
+    }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script type="text/javascript">
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
+            window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+    window.RAF = window.requestAnimationFrame;
+
+    var oCanvas = document.getElementById('canvas');
+    var ctx = oCanvas.getContext('2d');
+        ctx.strokeStyle="#0000ff";
+        ctx.fillStyle="#ff0000";
+
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+    var posX = 0;
+    var posY = 0;
+    var point = [];
+    oCanvas.width = W;
+    oCanvas.height = H;
+
+    for(var i=0;i<300;i++){
+        point[i] = {};
+        point[i].y = Math.random()*H;
+        point[i].x = Math.random()*W;
+        point[i].id = i;
+        point[i].had = [];
+        point[i].sX = Math.random()-0.5;
+        point[i].sY = Math.random()-0.5;
+        point[i].r = Math.random()*1.5;
+    }
+
+    document.addEventListener('mousemove',function(ev){
+        posX = ev.pageX;
+        posY = ev.pageY;
+        point[299].x = posX;
+        point[299].y = posY;
+    },false);
+
+    // for(var i=0,l = point.length;i<l;i++){
+    //     point[i].closet = [];
+    // }
+
+
+
+
+
+
+    render()
+
+    function render(){
+        var obj = {};
+        ctx.clearRect(0,0,W,H);
+        for (var i = 0,l = point.length-1; i < l; i++) {
+            point[i].x+=point[i].sX;
+            point[i].y+=point[i].sY;
+            if(point[i].x<0){
+                point[i].x = W;
+            }
+            if(point[i].x>W){
+                point[i].x = 0;
+            }
+            if(point[i].y<0){
+                point[i].y = H;
+            }
+            if(point[i].y>H){
+                point[i].y = 0;
+            }
+        };
+
+        for (var i = 0,l = point.length; i < l; i++) {
+            obj = point[i];
+
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.fillStyle="#feff92";
+            ctx.arc(point[i].x,point[i].y,point[i].r,0,2*Math.PI);
+            ctx.fill();
+            var aa = range(posX,posY,point[i].x,point[i].y,100)?50:20;
+            for(var j = 0; j < l; j++){
+
+                if(range(point[i].x,point[i].y,point[j].x,point[j].y,aa)&&(point[i].had.indexOf(point[j].id))){
+                    point[i].had.push(point[j].id);
+                    ctx.beginPath();
+                    ctx.strokeStyle="#ff3b13";
+                    ctx.moveTo(point[i].x,point[i].y);
+                    ctx.lineTo(point[j].x,point[j].y);
+                    ctx.stroke();
+                }
+            }
+        };
+        RAF(render);
+    }
+
+    function range(x1,y1,x2,y2,r){
+        return (Math.pow((x2-x1),2)+Math.pow((y2-y1),2))<(r*r);
+    }
+
+</script>
+</body>
+</html>

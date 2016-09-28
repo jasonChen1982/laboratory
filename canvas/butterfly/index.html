@@ -1,0 +1,352 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>补色着色</title>
+    <link rel="stylesheet" href="./css/main.css">
+<script id="vs" type="x-shader/x-vertex">
+    attribute vec3 position;
+    attribute vec4 color;
+    uniform   mat4 mvpMatrix;
+    varying   vec4 vColor;
+
+    void main(void){
+        vColor = color;
+        gl_Position = mvpMatrix * vec4(position, 1.0);
+    }
+    
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+    precision highp float;
+
+    varying vec4 vColor;
+
+    void main(void){
+        gl_FragColor = vColor;
+    }
+</script>
+</head>
+<body>
+	<canvas id="butterfly"></canvas>
+</body>
+<script src="./js/stats.min.js"></script>
+<script type="text/javascript" src="./js/minMatrix.js"></script>
+<script type="text/javascript" src="./js/TweenMax.min.js"></script>
+<script type="text/javascript" src="./js/butterflyData.js"></script>
+<script type="text/javascript" src="./js/butterfly_webgl.js"></script>
+<script type="text/javascript">
+window.onerror = function(m,u,l){
+	alert(l);
+};
+
+var lastTime = 0;
+var vendors = ['ms', 'moz', 'webkit', 'o'];
+for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
+        window[vendors[x] + 'CancelRequestAnimationFrame'];
+}
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function(callback) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+          timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+    };
+}
+if (!window.cancelAnimationFrame) {
+    window.cancelAnimationFrame = function(id) {
+        clearTimeout(id);
+    };
+}
+
+var W = window.innerWidth,
+	H = window.innerHeight,
+	gl;
+var canvas = document.getElementById('butterfly');
+resize();
+window.onresize = function(){
+    W=window.innerWidth;
+    H=window.innerHeight;
+    resize();
+};
+function resize(){
+    canvas.width = W; // *window.devicePixelRatio
+    canvas.height = H; // *window.devicePixelRatio
+    canvas.style.width = W;
+    canvas.style.height = H;
+}
+
+
+
+var wings,material,body;
+
+
+// var stats = new Stats();
+// 	stats.domElement.style.position = 'absolute';
+// 	stats.domElement.style.top = '0px';
+// 	document.body.appendChild( stats.domElement );
+
+onload = function(){
+	gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+	// gl.viewport( 0, 0, canvas.width, canvas.height );
+
+	// var v_shader = create_shader('vs');
+	// var f_shader = create_shader('fs');
+	
+	// var prg = create_program(v_shader, f_shader);
+	
+	// var attLocation = new Array();
+	// attLocation[0] = gl.getAttribLocation(prg, 'position');
+	// attLocation[1] = gl.getAttribLocation(prg, 'color');
+	
+	// var attStride = new Array();
+	// attStride[0] = 3;
+	// attStride[1] = 4;
+
+	// var butterflyData = createButterfly();
+	// console.log(butterflyData);
+
+	// var wingL = createButterflyWings();
+	// console.log(wingL);
+	// var position = wingL.vertex;
+	// var color = wingL.color;
+	// var index = wingL.index;
+
+	// var pos_vbo = create_vbo(position);
+	// var col_vbo = create_vbo(color);
+	
+	// set_attribute([pos_vbo, col_vbo], attLocation, attStride);
+	
+	// var ibo = create_ibo(index);
+	
+	// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+	
+	// var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
+	material = new Material();
+	body = new Body(createButterfly(),material);
+	wings = new Wings(createButterflyWings(),material);
+	tentacle = new Tentacle(createTentacle(),material);
+	wings.translate.x = -1.2;
+	
+	var m = new matIV();
+	
+	var mMatrix = m.identity(m.create());
+	var vMatrix = m.identity(m.create());
+	var pMatrix = m.identity(m.create());
+	var tmpMatrix = m.identity(m.create());
+	var mvpMatrix = m.identity(m.create());
+	
+	m.lookAt([0.0, 0.0, 100.0], [0, 0, 0], [0, 1, 0], vMatrix);
+	m.perspective(60, canvas.width / canvas.height, 0.1, 1000, pMatrix);
+	m.multiply(pMatrix, vMatrix, tmpMatrix);
+	
+	
+	gl.enable(gl.DEPTH_TEST);
+	gl.depthFunc(gl.LEQUAL);
+	gl.enable(gl.CULL_FACE);
+
+
+	// gl.enable(gl.BLEND);
+	// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+	gl.enable( gl.BLEND );
+	gl.blendEquation( gl.FUNC_ADD );
+	gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
+
+	gl.clearColor(222/255, 76/255, 99/255, 1.0);
+	gl.clearDepth(1.0);
+
+	go();
+
+	function go(){
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		
+		// count++;
+		
+		var radX = (BODY.countX % 360) * Math.PI / 180;
+		var radY = (BODY.countY % 360) * Math.PI / 180;
+		var radZ = (BODY.countZ % 360) * Math.PI / 180;
+		
+		m.identity(mMatrix);
+		m.rotate(mMatrix, radX, [1, 0, 0], mMatrix);
+		m.rotate(mMatrix, radY, [0, 1, 0], mMatrix);
+		m.rotate(mMatrix, radZ, [0, 0, 1], mMatrix);
+		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+
+		body.render(mvpMatrix);
+
+		wings.render(mvpMatrix);
+		tentacle.render(mvpMatrix);
+		gl.flush();
+		requestAnimationFrame(go);
+	}
+	bodyFly();
+};
+
+
+
+
+
+var speed = 1,speedz = 1,posX = 0,posY = 0,iIntervalX=0,iIntervalY=0,moveable = false;
+var BODY = {
+		countX: 0,
+		countY: 0,
+		countZ: 0
+	};
+canvas.addEventListener('touchstart',function(ev){
+	var touch_ev = ev.touches[0];
+        posX = touch_ev.clientX;
+        posY = touch_ev.clientY;
+        iIntervalX=0;
+        iIntervalY=0;
+},false);
+canvas.addEventListener('touchmove',function(ev){
+	ev.preventDefault();
+	var touch_ev = ev.touches[0];
+	iIntervalX = touch_ev.clientX-posX;
+    iIntervalY = touch_ev.clientY-posY;
+
+    if(Math.abs(iIntervalX)>Math.abs(iIntervalY)){
+		BODY.countZ += iIntervalX/10;
+    }
+
+    if(Math.abs(iIntervalX)<Math.abs(iIntervalY)){
+		BODY.countX += iIntervalY/10;
+	}
+	posX = touch_ev.clientX;
+	posY = touch_ev.clientY;
+},false);
+
+
+canvas.addEventListener('mousedown',function(ev){
+        posX = ev.pageX;
+        posY = ev.pageY;
+        iIntervalX=0;
+        iIntervalY=0;
+        moveable = true;
+},false);
+canvas.addEventListener('mouseup',function(ev){
+        moveable = false;
+},false);
+canvas.addEventListener('mousemove',function(ev){
+	ev.preventDefault();
+	if(!moveable)return;
+	iIntervalX = ev.pageX-posX;
+    iIntervalY = ev.pageY-posY;
+
+    if(Math.abs(iIntervalX)>Math.abs(iIntervalY)){
+		BODY.countZ += iIntervalX/10;
+    }
+
+    if(Math.abs(iIntervalX)<Math.abs(iIntervalY)){
+		BODY.countX += iIntervalY/10;
+	}
+	posX = ev.pageX;
+	posY = ev.pageY;
+},false);
+
+var dd = true,base = 0;
+function bodyFly(){
+	var to = dd?base+80:base-50,
+		time = dd?0.5:0.6;
+		dd=!dd;
+	TweenMax.to(wings.rotate, time, {
+		y: to,
+		onComplete: function(){bodyFly();},
+		ease: Power1.easeInOut
+	});
+}
+
+
+
+function create_shader(id){
+	var shader;
+	
+	var scriptElement = document.getElementById(id);
+	
+	if(!scriptElement){return;}
+	
+	switch(scriptElement.type){
+		
+		case 'x-shader/x-vertex':
+			shader = gl.createShader(gl.VERTEX_SHADER);
+			break;
+			
+		case 'x-shader/x-fragment':
+			shader = gl.createShader(gl.FRAGMENT_SHADER);
+			break;
+		default :
+			return;
+	}
+	
+	gl.shaderSource(shader, scriptElement.text);
+	
+	gl.compileShader(shader);
+	
+	if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
+		
+		return shader;
+	}else{
+		
+		alert(gl.getShaderInfoLog(shader));
+	}
+}
+
+function create_program(vs, fs){
+	var program = gl.createProgram();
+	
+	gl.attachShader(program, vs);
+	gl.attachShader(program, fs);
+	
+	gl.linkProgram(program);
+	
+	if(gl.getProgramParameter(program, gl.LINK_STATUS)){
+	
+		gl.useProgram(program);
+		
+		return program;
+	}else{
+		
+		alert(gl.getProgramInfoLog(program));
+	}
+}
+
+function create_vbo(data){
+	var vbo = gl.createBuffer();
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+	
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+	
+	return vbo;
+}
+
+function set_attribute(vbo, attL, attS){
+	for(var i in vbo){
+		gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+		
+		gl.enableVertexAttribArray(attL[i]);
+		
+		gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
+	}
+}
+
+function create_ibo(data){
+	var ibo = gl.createBuffer();
+	
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+	
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+	
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+	
+	return ibo;
+}
+</script>
+</html>

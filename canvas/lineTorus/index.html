@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>Russia Humor</title>
+    <style type="text/css">
+    html, body, span, div, p, a, table, tbody, td, h1, h2, h3, h4, h5, h6, img, form, font, strong, b, i, dl, dt, dd, ol, ul, li, dl, dd, dt, iframe, label, blockquote, input, button {padding:0;margin:0;list-style: none;}
+    html {
+        height: 100%;
+    }
+    body {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: hsl(265,66%,7%);
+        /*background: hsl(265,66%,7%) url(./images/bg0.jpg) center no-repeat;
+        background-size: 100% auto;*/
+        overflow: hidden;
+    }
+    #canvas {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script type="text/javascript" src="./js/minMartix.js"></script>
+<script type="text/javascript">
+var JCM = new matIV();
+var DTR = Math.PI/180.0;
+
+function Vertex3(x,y,z){
+    this.x = x||0;
+    this.y = y||0;
+    this.z = z||0;
+    this.toRAD = Math.PI/180.0;
+}
+function Mesh(mesh){
+    this.vertex = mesh.vertex;
+    this.index = mesh.index;
+    this.vertex3 = [];
+    this.rotate = new Vertex3();
+    this.toRAD = Math.PI/180.0;
+    this.matrix = JCM.identity(JCM.create());
+}
+Mesh.prototype.rotateXYZ = function(){
+    this.rotate.x = -30;
+    this.rotate.y += 1;
+    this.matrix = JCM.identity(JCM.create());
+    JCM.rotate(this.matrix, (this.rotate.x % 360) * this.toRAD, [1,0,0], this.matrix);
+    JCM.rotate(this.matrix, (this.rotate.y % 360) * this.toRAD, [0,1,0], this.matrix);
+    JCM.rotate(this.matrix, (this.rotate.z % 360) * this.toRAD, [0,0,1], this.matrix);
+};
+Mesh.prototype.upMatrix = function(){
+    this.rotateXYZ();
+    var mat = this.matrix;
+    for(var i=0,l=this.vertex.length;i<l;i++){
+        var x = this.vertex[i].x,
+            y = this.vertex[i].y,
+            z = this.vertex[i].z,
+            x1 = mat[0]*x+mat[4]*y+mat[8]*z,
+            y1 = mat[1]*x+mat[5]*y+mat[9]*z,
+            z1 = mat[2]*x+mat[6]*y+mat[10]*z;
+        this.vertex3[i] = {};
+        this.vertex3[i].x = x1;
+        this.vertex3[i].y = y1;
+        this.vertex3[i].z = z1;
+    }
+};
+
+
+var W,H;
+var colorH = 0;
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+resize();
+    
+window.onresize = function(){
+    resize();
+};
+var posX = 0,posY = 0, posZ = 90, light = {x:0,y:0,z:0,mmm:JCM.identity(JCM.create())};
+
+var mesh = new Mesh(torus(16, 24, 150));
+
+go();
+function go(){
+    colorH = (colorH+1)%360;
+    light.x -= 4;
+    light.y += 2;
+    light.mmm = JCM.identity(JCM.create());
+    JCM.rotate(light.mmm, (light.x % 360) * (Math.PI/180.0), [1,0,0], light.mmm);
+    JCM.rotate(light.mmm, (light.y % 360) * (Math.PI/180.0), [0,1,0], light.mmm);
+    JCM.rotate(light.mmm, (light.z % 360) * (Math.PI/180.0), [0,0,1], light.mmm);
+    var x = 0,
+        y = 0,
+        z = 90,
+        x1 = light.mmm[0]*x+light.mmm[4]*y+light.mmm[8]*z,
+        y1 = light.mmm[1]*x+light.mmm[5]*y+light.mmm[9]*z,
+        z1 = light.mmm[2]*x+light.mmm[6]*y+light.mmm[10]*z;
+
+    posX = x1;
+    posY = y1;
+    posZ = z1;
+
+
+    mesh.upMatrix();
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    ctx.translate(W/2,H/2);
+    for(var i=0;i<mesh.index.length;i++){
+        var pp = mesh.index[i],
+            p1 = {x: mesh.vertex3[pp[0]].x,y: mesh.vertex3[pp[0]].y,z: mesh.vertex3[pp[0]].z},
+            p2 = {x: mesh.vertex3[pp[1]].x,y: mesh.vertex3[pp[1]].y,z: mesh.vertex3[pp[1]].z},
+            p3 = {x: mesh.vertex3[pp[2]].x,y: mesh.vertex3[pp[2]].y,z: mesh.vertex3[pp[2]].z},
+            canFill = cullFace(p1,p2,p3);
+        if(!canFill)continue;
+        ctx.beginPath();
+        for(var j=0;j<3;j++){
+            if(j===0){
+                ctx.moveTo(mesh.vertex3[pp[j]].x,mesh.vertex3[pp[j]].y);//,1,1
+            }else{
+                ctx.lineTo(mesh.vertex3[pp[j]].x,mesh.vertex3[pp[j]].y);//,1,1
+            }
+        }
+        var x = (p1.x+p2.x+p3.x)/3,
+            y = (p1.y+p2.y+p3.y)/3,
+            z = (p1.z+p2.z+p3.z)/3;
+        var dd = getDistance(x,y,z);
+
+        var color = 'hsla('+colorH+',66%,'+Math.max((300-dd)/5,9)+'%,0.6)';
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        ctx.fill();
+        ctx.stroke();
+    }
+    ctx.restore();
+    requestAnimationFrame(go);
+}
+
+function getDistance(x,y,z){
+    var x1 = x-posX,
+        y1 = y-posY,
+        z1 = z-posZ;
+    return Math.sqrt(x1*x1+y1*y1+z1*z1);
+}
+
+function resize(){
+    W=window.innerWidth;
+    H=window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+    // canvas.style.width = W/2+'px';
+    // canvas.style.height = H/2+'px';
+}
+function torus(row, column, irad){
+    var degX = 0,
+        degY = 0,
+        toRAD = Math.PI/180,
+        spaceX = toRAD*180/row,
+        spaceY = toRAD*360/column,
+        vertex = [],
+        index = [];
+
+    for(var i=0;i<=row;i++){
+        degX = spaceX*i;
+        for(var j=0;j<=column;j++){
+            degY = spaceY*j;
+            var point = {};
+            point.x = Math.sin(degX)*Math.sin(degY)*irad;
+            point.y = Math.cos(degX)*irad;
+            point.z = Math.sin(degX)*Math.cos(degY)*irad;
+            vertex.push(point);
+        }
+    }
+    for(a = 0; a < row; a++){
+        for(b = 0; b < column; b++){
+            r = (column + 1) * a + b;
+            index.push([r, r + column + 1, r + 1]);
+            index.push([r + column + 1, r + column + 2, r + 1]);
+        }
+    }
+    return {vertex:vertex,index:index};
+}
+
+function cullFace(p1,p2,p3){
+    var v1 = {
+            x: p2.x-p1.x,
+            y: p2.y-p1.y,
+            z: p2.z-p1.z
+        },
+        v2 = {
+            x: p3.x-p2.x,
+            y: p3.y-p2.y,
+            z: p3.z-p2.z
+        },
+        nor = {
+            x: v1.y*v2.z-v2.y*v1.z,
+            y: v2.x*v1.z-v1.x*v2.z,
+            z: v1.x*v2.y-v2.x*v1.y
+        };
+        return nor.z>0.01;
+}
+
+</script>
+</body>
+</html>

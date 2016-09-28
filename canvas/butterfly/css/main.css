@@ -1,0 +1,53 @@
+html, body, span, div, p, a, table, tbody, td, h1, h2, h3, h4, h5, h6, img, form, strong, b, i, dl, dt, dd, ol, ul, li, dl, dd, dt, iframe, label, blockquote, input, button {
+    padding:0;
+    margin:0;
+    list-style: none;
+}
+html {
+    font-size: 10px;
+}
+body {
+    font-family: arial,Tahoma;
+    -webkit-text-size-adjust:none;
+    overflow: hidden;
+}
+img {
+    vertical-align:middle;
+    border:none;
+}
+a {
+    color:#80c1fd;
+    text-decoration:none;
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
+}
+input, button, select, textarea {
+    outline:none;
+    font-family:"\5FAE\8F6F\96C5\9ED1";
+}
+input:focus {
+    outline:none;
+}
+textarea {
+    resize:none
+}
+.hidden{
+    display: none;
+}
+.fl {
+    float:left;
+}
+.fr {
+    float:right;
+}
+.clearfix:after {
+    visibility:hidden;
+    display:block;
+    height:0;
+    font-size:0;
+    content:"";
+    clear:both;
+}
+.clearfix {
+    zoom:1;
+}

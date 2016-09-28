@@ -1,0 +1,29 @@
+html{
+	padding:0;
+	margin:0;
+	overflow: hidden;
+	}
+
+body{
+	padding:0;
+	margin:0;
+	font-family: sans-serif;
+}
+
+#visualizer{
+	position:absolute;
+	top: 0;
+	left: 0;
+	height:100%;
+	width:100%;
+	background-color: #fff;
+}
+#visNav {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+#icon_deuce {
+	display: inline-block;
+}
