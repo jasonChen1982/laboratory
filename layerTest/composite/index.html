@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>补色着色</title>
+<style type="text/css">
+    * {padding: 0; margin: 0;}
+    body { overflow: hidden;}
+    .banner-box {
+        position: relative;
+        height: 200px;
+        perspective: 300px;
+    }
+    .first-layer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        transform-style: preserve-3d;
+        transform: rotateX(20deg);
+        text-align: center;
+        line-height: 200px;
+        z-index: 1;
+    }
+    .higher-element {
+        position: absolute;
+        left: 20px;
+        top: -2px;
+        width: 200px;
+        height: 100px;
+        background-color: #ffffff;
+        z-index: 1;
+        text-align: center;
+        line-height: 100px;
+        animation: move 1s infinite alternate;
+    }
+    .list-item {
+        position: relative;
+        height: 100px;
+        padding-left: 260px;
+        line-height: 100px;
+    }
+    .ico1 {
+        animation: move 2s infinite alternate;
+    }
+    @keyframes move {
+        0% {
+            /*top: -20px;*/
+            transform: translateY(-20px);
+        }
+        100% {
+            /*top: 20px;*/
+            transform: translateY(20px);
+        }
+    }
+</style>
+</head>
+<body>
+<div class="banner-box">
+    <div class="first-layer">banner</div>
+</div>
+<div class="list-box">
+    <div class="list-item">
+        <div class="higher-element ico1">ico pic</div>
+        <p>ffs gasfgs gfagd gafgsdh fdfsaf gagsfg gasfsaf</p>
+    </div>
+    <div class="list-item">
+        <div class="higher-element">ico pic</div>
+        <p>ffs gasfgs gfagd gafgsdh fdfsaf gagsfg gasfsaf</p>
+    </div>
+    <div class="list-item">
+        <div class="higher-element ico1">ico pic</div>
+        <p>ffs gasfgs gfagd gafgsdh fdfsaf gagsfg gasfsaf</p>
+    </div>
+    <div class="list-item">
+        <div class="higher-element">ico pic</div>
+        <p>ffs gasfgs gfagd gafgsdh fdfsaf gagsfg gasfsaf</p>
+    </div>
+</div>
+</body>
+</html>
