@@ -27,7 +27,7 @@
 </head>
 <body>
 <canvas id="webgl"></canvas>
-<div class="vr-btn"></div>
+<div class="vr-btn" id="vr-btn"></div>
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/MTLLoader.js"></script>
 <script type="text/javascript" src="./js/OBJLoader.js"></script>
@@ -133,8 +133,8 @@ function motion(){
                 camera.position.x = point.x;
                 camera.position.y = point.y;
                 camera.position.z = point.z;
-                var pp = berzer.getPoint([new THREE.Vector3( 0.0,1.0,-50.0 ), new THREE.Vector3( 0, 80, -50 ), new THREE.Vector3( 0.0,1.0,-50.0 )],t);
-                camera.lookAt(new THREE.Vector3(pp.x,pp.y,pp.z));
+                // var pp = berzer.getPoint([new THREE.Vector3( 0.0,1.0,-50.0 ), new THREE.Vector3( 0, 80, -50 ), new THREE.Vector3( 0.0,1.0,-50.0 )],t);
+                // camera.lookAt(new THREE.Vector3(pp.x,pp.y,pp.z));
             },
             function(){
                 moveEnd = true;
@@ -156,8 +156,6 @@ function animate() {
     RAF( animate );
     // roadScene.speedUp();
     // camera.rotation.y += 0.008;
-
-    if(moveEnd)controls.update();
     render();
 
 }
@@ -167,13 +165,46 @@ function render() {
     if(!vrRender){
         renderer.render( scene, camera );
     }else{
+        controls.update();
         effect.render(scene, camera);
     }
 
 
 }
 animate();
+renderer.domElement.addEventListener('click',function(){
+    // launchFullScreen(renderer.domElement);
+    if(vrRender){
+        vrRender = false;
+        exitFullscreen(renderer.domElement);
+        vrBtn.style.display = 'block';
+    }
+});
+var vrBtn = document.getElementById('vr-btn');
+vrBtn.addEventListener('click',function(){
+    launchFullScreen(renderer.domElement);
+    vrRender = true;
+    vrBtn.style.display = 'none';
+});
 
+function launchFullScreen(element) { 
+    if(element.requestFullscreen) { 
+        element.requestFullscreen(); 
+    } else if(element.mozRequestFullScreen) { 
+        element.mozRequestFullScreen(); 
+    } else if(element.webkitRequestFullscreen) { 
+        element.webkitRequestFullscreen(); 
+    }
+} 
+function exitFullscreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
 
 </script>
 </body>
