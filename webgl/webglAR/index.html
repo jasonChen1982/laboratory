@@ -3,282 +3,226 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Cache-Control" content="no-cache">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="full-screen" content="yes">
-	<title>JC_demo</title>
-	<style type="text/css">
-    * {padding:0;margin:0;}
-    body {overflow: hidden;}
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo_AR</title>
+    <script type="text/javascript">
+    (function() {
+        'use strict';
+        var UI = {
+            VOH: 'width',
+            DsgSize: 640,
+            root: document.documentElement,
+            needPut: false,
+            ucHole: 1,
+            resolution: Math.min(1, window.devicePixelRatio),
+            rem: 100,
+            monitoring: false,
+            isUC: /uc/i.test(window.navigator.userAgent)
+        };
+
+        UI.init = function(opts) {
+            opts = opts || {};
+            this.VOH = opts.VOH || 'width';
+            this.DsgSize = opts.DsgSize || 640;
+            this.rem = opts.rem || 100;
+            this.resolution = opts.resolution || this.resolution;
+            this.meta = this.meta || document.querySelector('meta[name="viewport"]');
+            this._putMeta();
+        };
+        UI._putMeta = function() {
+            if (!this.meta) {
+                this.meta = document.createElement('meta');
+                this.meta.setAttribute('name', 'viewport');
+                this.needPut = true;
+            }
+            var ratio = 1 / this.resolution;
+            this.meta.setAttribute('content', 'width=device-width,initial-scale=' + ratio + ', maximum-scale=' + ratio + ', minimum-scale=' + ratio + ', user-scalable=no');
+            if (this.needPut) {
+                document.head.appendChild(this.meta);
+                this.needPut = false;
+            }
+            this.suit();
+            this._ears();
+        };
+        UI._ears = function() {
+            if (this.monitoring) return;
+            var This = this;
+            window.addEventListener('resize', function() {
+                This.suit();
+            }, false);
+            document.addEventListener("DOMContentLoaded", function() {
+                This.isUC && This._fillHole();
+            });
+            setTimeout(function() {
+                This.suit();
+            }, 100);
+            this.monitoring = true;
+        };
+        UI._fillHole = function() {
+            var dom = document.createElement('div'),
+                sPX = 100,
+                tPX = 100;
+            dom.style.fontSize = sPX + "px";
+            document.body.appendChild(dom);
+            tPX = parseInt(window.getComputedStyle(dom, null).fontSize, 10) || tPX;
+
+            this.ucHole = sPX / tPX;
+
+            this.suit();
+
+            setTimeout(function() {
+                document.body.removeChild(dom);
+            }, 100);
+        };
+        UI.suit = function() {
+            var nowSize = this.VOH === 'width' ? document.documentElement.offsetWidth : document.documentElement.offsetHeight;
+            this.sPPR = this.rem * nowSize / this.DsgSize;
+            this.curPPR = this.ucHole * this.sPPR;
+            this.root.style.fontSize = this.curPPR + 'px';
+        };
+        UI.RTP = function(rem, bool) {
+            return (bool ? rem * this.curPPR : rem * this.sPPR) >> 0;
+        };
+        UI.PTR = function(px) {
+            return px / this.curPPR;
+        };
+
+        window.JC = window.JC || {};
+        window.JC.UI = UI;
+    })();
+    window.JC.UI.init();
+    </script>
+    <style type="text/css">
+        * {
+            margin: 0;
+        }
+        body {
+            position: relative;
+        }
+        #v {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 6.4rem;
+            height: 4.8rem;
+        }
+        #WebAR {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 6.4rem;
+            height: 4.8rem;
+        }
     </style>
 </head>
 <body>
-<canvas id="webgl"></canvas>
-<script type="text/javascript" src="./js/three.js"></script>
-<script type="text/javascript" src="./js/Bezier.js"></script>
-<script type="text/javascript" src="./js/putStar.js"></script>
-<script type="text/javascript" src="./js/StereoEffect.js"></script>
-<script type="text/javascript" src="./js/DeviceOrientationControls.js"></script>
+
+<video id="v" src="Data/output_4.ogg" width="640" height="480" loop="" controls="" autoplay>不支持</video>
+<canvas id="WebAR"></canvas>
+
+<script type="text/javascript" src="./js/three.min.js"></script>
+<script type="text/javascript" src="./js/MTLLoader.js"></script>
+<script type="text/javascript" src="./js/OBJLoader.js"></script>
+<script type="text/javascript" src="./js/artoolkit.debug.js"></script>
+<script type="text/javascript" src="./js/artoolkit.api.js"></script>
 <script type="text/javascript">
-window.onerror = function(m,u,l){
-    alert(m+":::"+l);
+window.onerror = function(msg,url,line){
+    alert('line::::'+line+'url::::'+url+'msg::::'+msg);
 };
 
-function launchFullScreen(element) { 
-    if(element.requestFullscreen) { 
-        element.requestFullscreen(); 
-    } else if(element.mozRequestFullScreen) { 
-        element.mozRequestFullScreen(); 
-    } else if(element.webkitRequestFullscreen) { 
-        element.webkitRequestFullscreen(); 
-    } else if(element.msRequestFullscreen) { 
-        element.msRequestFullscreen(); 
-    } 
-} 
+var USE_SHADER = false;
 
 
-// 在支持全屏的浏览器中启动全屏 
-// 整个页面 
-document.getElementById('webgl').addEventListener('click',function(){
-    launchFullScreen(document.documentElement);
+
+var renderer = new THREE.WebGLRenderer({
+    canvas: document.getElementById('WebAR'),
+    alpha: true
+});
+var scene = new THREE.Scene();
+
+renderer.setSize(v.width, v.height, false);
+
+document.body.appendChild(renderer.domElement);
+
+// Create a camera and a marker root object for your Three.js scene.
+var camera = new THREE.Camera();
+scene.add(camera);
+
+var ambient = new THREE.AmbientLight( 0xaaaaaa );
+scene.add( ambient );
+var light = new THREE.PointLight(0xffffff);
+light.position.set(-400, -500, -100);
+scene.add(light);
+
+var markerRoot = new THREE.Group();
+
+markerRoot.wasVisible = false;
+markerRoot.markerMatrix = new Float64Array(12);
+markerRoot.matrixAutoUpdate = false;
+camera.matrixAutoUpdate = false;
+
+
+var mtlLoader = new THREE.MTLLoader();
+mtlLoader.setPath('./model/');
+mtlLoader.load('tree.mtl', function(materials) {
+    materials.preload();
+    var objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials(materials);
+    objLoader.setPath('./model/');
+    objLoader.load('tree.obj', function(object) {
+        object.scale.set(0.8, 0.8, 0.8);
+        object.rotation.x = Math.PI/2;
+        markerRoot.add(object);
+    });
 });
 
+// Add the marker root to your scene.
+scene.add(markerRoot);
+var arController = null;
 
-var renderer, scene, camera, stats;
+var video = document.getElementById('v');
 
-var particleSystem, uniforms, geometry, geometryStar, particleSystems, constellation = {};
+// On every frame do the following:
+function tick() {
+    requestAnimationFrame(tick);
 
-var particles = 20000;
-
-var WIDTH = window.innerWidth;
-var HEIGHT = window.innerHeight;
-
-init();
-animate();
-
-function init() {
-    WIDTH = window.innerWidth;
-    HEIGHT = window.innerHeight;
-    camera = new THREE.PerspectiveCamera( 45, WIDTH / HEIGHT, 1, 10000 );
-    camera.position.z = 60;
-    camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
-    controls = new THREE.DeviceOrientationControls( camera );
-
-    scene = new THREE.Scene();
-
-    uniforms = {
-
-        color:     { type: "c", value: new THREE.Color( 0xffffff ) },
-        texture:   { type: "t", value: THREE.ImageUtils.loadTexture( "./images/spark1.png" ) }
-
-    };
-
-    var shaderMaterial = new THREE.ShaderMaterial( {
-
-        uniforms:       uniforms,
-        vertexShader:   document.getElementById( 'vs' ).textContent,
-        fragmentShader: document.getElementById( 'fs' ).textContent,
-
-        blending:       THREE.AdditiveBlending,
-        depthTest:      false,
-        transparent:    true
-
-    });
-
-    var radius = 100;
-
-    geometry = new THREE.BufferGeometry();
-
-    var positions = new Float32Array( particles * 3 );
-    var colors = new Float32Array( particles * 3 );
-    var sizes = new Float32Array( particles );
-
-    var color = new THREE.Color();
-
-    for ( var i = 0, i3 = 0; i < particles; i ++, i3 += 3 ) {
-
-        positions[ i3 + 0 ] = ( Math.random() * 2 - 1 ) * radius;
-        positions[ i3 + 1 ] = ( Math.random() * 2 - 1 ) * radius;
-        positions[ i3 + 2 ] = ( Math.random() * 2 - 1 ) * radius;
-
-        color.setHSL( i / particles, 1.0, 0.5 );
-
-        colors[ i3 + 0 ] = 0.99;
-        colors[ i3 + 1 ] = 1.0;
-        colors[ i3 + 2 ] = 0.9;
-
-        var rr = Math.random()<0.1,
-            bb = rr?1.4:6.0;
-            sizes[ i ] = Math.random()*bb;
+    if (!arController) {
+        return;
     }
 
-    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-    geometry.addAttribute( 'customColor', new THREE.BufferAttribute( colors, 3 ) );
-    geometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
-
-    particleSystem = new THREE.Points( geometry, shaderMaterial );
-
-    scene.add( particleSystem );
-
-
-
-
-    constellation[0] = new PutStar({
-        vertexs: [0.35,0.56,0.0, 0.04,0.33,0.0, -0.24,0.14,0.0, 0.0,0.0,0.0, 0.21,0.05,0.0, 0.21,0.05,0.0, 0.0,0.0,0.0, -0.24,0.14,0.0, -0.24,-0.02,0.0, -0.35,-0.12,0.0, -0.12,-0.44,0.0, -0.08,-0.29,0.0, 0.1,-0.26,0.0, 0.3,-0.4,0.0],
-        starMaterial: shaderMaterial,
-        lookAt: new THREE.Vector3(10.0,20.0,10.0),
-        position: new THREE.Vector3(5.0,10.0,5.0)
-    });
-    constellation[1] = new PutStar({
-        vertexs: [-0.17,0.25,0.0, -0.03,0.06,0.0, -0.0,0.0,0.0, 0.36,-0.15,0.0, -0.0,0.0,0.0, 0.0,-0.27,0.0],
-        starMaterial: shaderMaterial,
-        lookAt: new THREE.Vector3(-50,10,-50),
-        position: new THREE.Vector3(-45.0,9.0,-45.0)
-    });
-    constellation[2] = new PutStar({
-        vertexs: [0.05,0.32,0.0, -0.06,0.30,0.0, -0.08,0.08,0.0, 0.0,0.0,0.0, 0.14,0.02,0.0, 0.27,-0.1,0.0, -0.17,-0.46,0.0, -0.31,-0.62,0.0, -0.28,-0.32,0.0, -0.0,0.0,0.0],
-        starMaterial: shaderMaterial,
-        lookAt: new THREE.Vector3(-60,30,10),
-        position: new THREE.Vector3(-48,24,8)
-    });
-    constellation[3] = new PutStar({
-        vertexs: [-0.23,0.58,0.0, -0.31,0.66,0.0, -0.27,0.76,0.0, -0.2,0.82,0.0, -0.1,0.78,0.0, -.07,0.65,0.0, -0.12,0.57,0.0, -0.23,0.58,0.0, -0.19,0.45,0.0, -0.06,0.12,0.0, 0.0,0.0,0.0, 0.14,-0.17,0.0, 0.32,-0.35,0.0, 0.09,-0.3,0.0, -0.14,-0.3,0.0, -0.44,-0.3,0.0, -0.52,-0.4,0.0, -0.63,-0.32,0.0],
-        starMaterial: shaderMaterial,
-        lookAt: new THREE.Vector3(50,-10,50),
-        position: new THREE.Vector3(40,-8,40)
-    });
-    constellation[4] = new PutStar({
-        vertexs: [1.0,0.62,0.0, 0.52,0.53,0.0, 0.3,0.28,0.0, 0.0,0.0,0.0, 0.04,-0.34,0.0, -.51,-0.56,0.0, -0.73,-0.23,0.0],
-        starMaterial: shaderMaterial,
-        lookAt: new THREE.Vector3(10,60,-30),
-        position: new THREE.Vector3(8,48,-24)
-    });
-    scene.add( constellation[0].group,constellation[1].group,constellation[2].group,constellation[3].group,constellation[4].group );
-
-
-
-
-
-    renderer = new THREE.WebGLRenderer({
-        canvas: document.getElementById('webgl')
-    });
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( WIDTH, HEIGHT );
-    renderer.setClearColor(0x010632);
-    effect = new THREE.StereoEffect(renderer);
-
-
-    window.addEventListener( 'resize', onWindowResize, false );
-}
-
-function onWindowResize() {
-
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
-}
-
-function animate() {
-
-    requestAnimationFrame( animate );
-
-    render();
-    controls.update();
-
-}
-
-function render() {
-
-    var time = Date.now() * 0.005;
-
-    particleSystem.rotation.y = -0.004 * time;
-
-    // renderer.render( scene, camera );
-    effect.render(scene, camera);
-
-}
-
-
-
-
-
-var pathDates = [
-        [0,0,60],
-        [-50,-30,20],
-        [50,70,-20],
-
-        [10,20,10],
-
-        [60,50,10],
-        [-80,20,60],
-
-        [-50,10,-50],
-
-        [10,90,20],
-        [60,-60,-50],
-
-        [-60,30,10],
-
-        [10,-100,20],
-        [-50,-30,10],
-
-        [50,-10,50],
-
-        [100,10,20],
-        [10,-40,10],
-
-        [10,60,-30],
-
-        [10,10,20],
-        [60,-40,-50],
-        [0,0,60]
-    ],
-    aPoints = [];
-    for(var i=0,l=pathDates.length;i<l;i++){
-        aPoints[i] = {};
-        aPoints[i].x = pathDates[i][0];
-        aPoints[i].y = pathDates[i][1];
-        aPoints[i].z = pathDates[i][2];
-    };
-path = new BezierPath();
-
-
-var iNowPage = 0,prePage = null;
-var clickBtn = true;
-// document.getElementById('webgl').addEventListener('click');
-function goto(){
-
-    if(!clickBtn) return;
-    clickBtn = false ;
-    if(prePage!==null)constellation[prePage].hideLine();
-
-    var points = [aPoints[iNowPage*3],aPoints[iNowPage*3+1],aPoints[iNowPage*3+2],aPoints[iNowPage*3+3]];
-    path.drawPath(points,8000,"easeBoth",function(point){
-        camera.position.x = point.x;
-        camera.position.y = point.y;
-        camera.position.z = point.z;
-        // camera.lookAt(new THREE.Vector3(0.0,0.0,0.0));
-    },function(){
-        if(iNowPage*3+4<aPoints.length){
-            constellation[iNowPage].showLine();
-            prePage = iNowPage;
-        }else{
-            prePage = null;
+    arController.detectMarker(video);
+    var markerNum = arController.getMarkerNum();
+    if (markerNum > 0) {
+        if (markerRoot.visible) {
+            arController.getTransMatSquareCont(0, 1, markerRoot.markerMatrix, markerRoot.markerMatrix);
+        } else {
+            arController.getTransMatSquare(0 /* Marker index */, 1 /* Marker width */, markerRoot.markerMatrix);
         }
-        iNowPage++;
-        if(iNowPage*3+3>=aPoints.length)iNowPage=0;
-        clickBtn = true;
-        setTimeout(goto,20e3);
-    });
+        markerRoot.visible = true;
+        arController.transMatToGLMat(markerRoot.markerMatrix, markerRoot.matrix.elements);
+    } else {
+        markerRoot.visible = false;
+    }
+
+    renderer.render(scene, camera);
 }
 
-setTimeout(goto,20e3);
+tick();
+
+var cameraParam = new ARCameraParam();
+cameraParam.onload = function() {
+
+    arController = new ARController(v.width, v.height, cameraParam);
+
+    var camera_mat = arController.getCameraMatrix();
+
+        camera.projectionMatrix.elements.set(camera_mat);
+
+};
+cameraParam.load('Data/camera_para.dat');
 
 
 </script>
+
 </body>
 </html>

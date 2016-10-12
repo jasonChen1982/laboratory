@@ -114,12 +114,12 @@ RoadScene.prototype.buildRoom = function() {
         btn = !btn;
         var random = Math.random();
         var color = COLORS[i];
-        var room = new THREE.Mesh(new THREE.BoxGeometry(60, 160, 60), new THREE.MeshLambertMaterial({
+        var room = new THREE.Mesh(new THREE.BoxGeometry(60, 120, 60), new THREE.MeshLambertMaterial({
             color: color
         }));
         room.position.x = btn ? -160 : 160;
         room.position.z = -1000;
-        room.position.y = 70;
+        room.position.y = 58;
         this.room.add(room);
         var tween = TweenMax.to(room.position, 12.5, { z: 1000, ease: Power0.easeNone, repeat: -1 });
         var progress = THREE.Math.clamp((i + random - 0.5) / num, 0, 1);
@@ -132,15 +132,16 @@ RoadScene.prototype.buildRoom = function() {
     this.doc.add(this.room);
 
 };
-RoadScene.prototype.speedUp = function() {
-    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() + 0.1, 0.4, 4);
+RoadScene.prototype.speedUp = function(speed) {
+    speed = speed || 0.01;
+    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() + speed, 0.4, 8);
     // console.log();
     this.tweenMax.timeScale(timeScale);
     this.changeSpeed(timeScale);
     // return timeScale;
 };
 RoadScene.prototype.speedDown = function() {
-    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() - 0.1, 0.4, 4);
+    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() - 0.04, 0.4, 8);
     // console.log();
     this.tweenMax.timeScale(timeScale);
     this.changeSpeed(timeScale);
