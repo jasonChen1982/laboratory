@@ -172,10 +172,39 @@
     transform: rotateX(30deg);
     background-color: #f8f;
   }
+
+  .scene {
+    float: left;
+    width: 400px; height: 400px;
+    perspective: 400px;
+    transform-style: preserve-3d;
+  }
+  .plane {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 128px;
+    height: 128px;
+    margin: -64px 0 0 -64px;
+    background: #ee8c25;
+    transform: rotateY(-45deg);
+  }
+  
+  .plane1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 128px;
+    height: 128px;
+    margin: -64px 0 0 -64px;
+    transform: rotateY(45deg);
+    transform-style: preserve-3d;
+    background: #d14730;
+  }
   </style>
 </head>
 <body>
-  <div class="view-box">
+  <!-- <div class="view-box">
     <div class="face"></div>
     <div class="face"></div>
     <div class="face"></div>
@@ -185,6 +214,10 @@
       <div class="face-inner"></div>
       <div class="face-inner"></div>
       <div class="face-inner"></div>
+    </div> -->
+    <div class="scene">
+      <div class="plane"></div>
+      <div class="plane1"></div>
     </div>
   </div>
 </body>
