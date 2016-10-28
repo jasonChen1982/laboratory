@@ -1,5 +1,87 @@
 'use strict';
 
+
+// NURBS curve
+
+var nurbsControlPoints = [];
+var nurbsKnots = [];
+var nurbsDegree = 3;
+
+for ( var i = 0; i <= nurbsDegree; i ++ ) {
+    nurbsKnots.push( 0 );
+}
+
+var cameraControl = [
+    new THREE.Vector4(0, 1, 300, 1),
+    new THREE.Vector4(0, 1, 100, 1),
+    new THREE.Vector4(-2, 1, -20, 1),
+    new THREE.Vector4(80, 40, 30, 1),
+    new THREE.Vector4(0, 1, 40, 1),
+    new THREE.Vector4(-80, 24, 30, 1),
+    new THREE.Vector4(-40, 18, 20, 1),
+    new THREE.Vector4(-20, 12, 10, 1),
+    new THREE.Vector4(-3, 12, -8, 1)
+];
+
+for ( var i = 0, j = cameraControl.length; i < j; i ++ ) {
+
+    nurbsControlPoints.push(
+        cameraControl[i]
+    );
+
+    var knot = ( i + 1 ) / ( j - nurbsDegree );
+    nurbsKnots.push( THREE.Math.clamp( knot, 0, 1 ) );
+
+}
+
+var nurbsCurve = new THREE.NURBSCurve(nurbsDegree, nurbsKnots, nurbsControlPoints);
+
+
+var lookAtControlPoints = [];
+var lookAtKnots = [];
+var lookAtDegree = 3;
+
+for ( var i = 0; i <= lookAtDegree; i ++ ) {
+    lookAtKnots.push( 0 );
+}
+
+var lookAtControl = [
+
+    // new THREE.Vector4(0, 1, 300, 1),
+    // new THREE.Vector4(0, 1, 100, 1),
+    // new THREE.Vector4(-2, 1, -20, 1),
+    // new THREE.Vector4(80, 40, 30, 1),
+    // new THREE.Vector4(0, 1, 40, 1),
+    // new THREE.Vector4(-80, 24, 30, 1),
+    // new THREE.Vector4(-40, 18, 20, 1),
+    // new THREE.Vector4(-20, 12, 10, 1),
+    // new THREE.Vector4(-3, 12, -8, 1)
+    new THREE.Vector4(0, 0, -8, 1),
+    new THREE.Vector4(5, 0, -8, 1),
+    new THREE.Vector4(10, 0, -8, 1),
+    new THREE.Vector4(5, 0, -8, 1),
+    new THREE.Vector4(0, 0, -8, 1),
+    new THREE.Vector4(-5, 0, -8, 1),
+    new THREE.Vector4(-10, 0, -8, 1),
+    new THREE.Vector4(0, 1, -50, 1)
+];
+
+for ( var i = 0, j = lookAtControl.length; i < j; i ++ ) {
+
+    lookAtControlPoints.push(
+        lookAtControl[i]
+    );
+
+    var knot = ( i + 1 ) / ( j - lookAtDegree );
+    lookAtKnots.push( THREE.Math.clamp( knot, 0, 1 ) );
+
+}
+
+var lookAtCurve = new THREE.NURBSCurve(lookAtDegree, lookAtKnots, lookAtControlPoints);
+
+
+
+
 function BeizerPath(a) {
     a = a || {};
     this.tween = {
@@ -143,8 +225,9 @@ BeizerPath.prototype.motion = function(b, c, d, e, f) {
             stop = a > c,
             t;
         if (stop) { t = 1 } else { t = This.tween[d](a, 0, 1, c) }
-        e && e(This.getPoint(b, t), t);
-        if (stop) { f && f(This.getPoint(b, t), t) } else { window.RAF(go) } }
+        e && e(nurbsCurve.getPoint(t), t);
+        if (stop) { f && f(This.getPoint(b, t), t) } else { window.RAF(go) } 
+    }
     window.RAF(go) 
 };
 BeizerPath.prototype.getPoint = function(b, t) {

@@ -47,6 +47,8 @@
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/MTLLoader.js"></script>
 <script type="text/javascript" src="./js/OBJLoader.js"></script>
+<script type="text/javascript" src="./js/NURBSCurve.js"></script>
+<script type="text/javascript" src="./js/NURBSUtils.js"></script>
 <script type="text/javascript" src="./js/TweenMax.min.js"></script>
 <script type="text/javascript" src="./js/StereoEffect.js"></script>
 <script type="text/javascript" src="./js/DeviceOrientationControls.js"></script>
@@ -159,17 +161,21 @@ var berzer = new BeizerPath();
 
 function motion() {
     berzer.motion(
-        [new THREE.Vector3(0, 1, 300), new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 40, 5), new THREE.Vector3(-3, 12, -6)],
+        [new THREE.Vector3(0, 1, 300), new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 40, 5), new THREE.Vector3(-3, 12, -8)],
         4000,
         'linear',
         function(point, t) {
             camera.position.x = point.x;
             camera.position.y = point.y;
             camera.position.z = point.z;
-            // var pp = berzer.getPoint([new THREE.Vector3( 0.0,1.0,-50.0 ), new THREE.Vector3( 0, 80, -50 ), new THREE.Vector3( 0.0,1.0,-50.0 )],t);
-            // camera.lookAt(new THREE.Vector3(pp.x,pp.y,pp.z));
+            // var pp = berzer.getPoint([new THREE.Vector3( 0,1,-8 ), new THREE.Vector3( 10, 1, -8 ), new THREE.Vector3( 0,1,-50 )],t);
+            var pp = lookAtCurve.getPoint(t+0.04);
+            camera.lookAt(pp);
+            console.log(pp);
         },
         function() {
+            camera.position.set(-3, 12, -8);
+            camera.lookAt(new THREE.Vector3( 0,1,-50 ));
             moveEnd = true;
             vrBtn.style.display = 'block';
         }
@@ -217,6 +223,8 @@ orienter.handler = function(obj) {
 
 
 };
+
+
 
 window.addEventListener('deviceorientation', function(event) {
     carStats.beta = event.beta;
