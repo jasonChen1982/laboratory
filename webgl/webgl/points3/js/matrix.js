@@ -1,4 +1,4 @@
-function matIV(){
+function Matrix(){
 	this.create = function(){
 		return new Float32Array(16);
 	};

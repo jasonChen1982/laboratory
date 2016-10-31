@@ -65,8 +65,7 @@ onload = function(){
 	var mvpM2 = gl.getUniformLocation(prg2, 'mvpMatrix');
 	
 	
-	var m = new matIV();
-	var Matrix = new matIV();
+	var m = new Matrix();
 	
 	var mMatrix = m.identity(m.create());
 	var vMatrix = m.identity(m.create());

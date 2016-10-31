@@ -6,25 +6,39 @@
     body { overflow: hidden;}
 </style>
 <script id="vs" type="x-shader/x-vertex">
-    attribute vec3 position;
+    attribute vec3  position;
     attribute float size;
-    uniform   mat4 mvpMatrix;
+    attribute vec3  color;
+    uniform   mat4  viewMatrix;
+    uniform   mat4  perspectiveMatrix;
+
+    uniform   mat4 modelMatrix;
+
+    varying   vec3 vColor;
 
     void main(void){
-        gl_Position = mvpMatrix * vec4(position, 1.0);
+        gl_Position = perspectiveMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+        vColor = color;
         gl_PointSize = size;
     }
 </script>
 
 <script id="fs" type="x-shader/x-fragment">
+    precision mediump float;
+    varying   vec3 vColor;
     void main(void){
-        gl_FragColor    = vec4(1.0,0.75,0.0,1.0);
+        vec4 color = vec4(vColor,1.0);
+        vec2 radius = vec2(0.5, 0.5) - gl_PointCoord;
+        if (length(radius.xy) > 0.5) {
+            color = vec4(0.0,0.0,0.0,0.0);
+        }
+        gl_FragColor = color;
     }
 </script>
 </head>
 <body>
     <canvas id="canvas" width="500" height="300"></canvas>
-<script src="./js/minMatrix.js" type="text/javascript"></script>
+<script src="./js/matrix.js" type="text/javascript"></script>
 <script src="./js/script.js" type="text/javascript"></script>
 </body>
 </html>

@@ -14,13 +14,17 @@ for ( var i = 0; i <= nurbsDegree; i ++ ) {
 var cameraControl = [
     new THREE.Vector4(0, 1, 300, 1),
     new THREE.Vector4(0, 1, 100, 1),
-    new THREE.Vector4(-2, 1, -20, 1),
-    new THREE.Vector4(80, 40, 30, 1),
+    new THREE.Vector4(-2, 1, -10, 1),
+    new THREE.Vector4(30, 20, 20, 1),
+    new THREE.Vector4(56, 36, -20, 1),
+    new THREE.Vector4(80, 50, -80, 1),
     new THREE.Vector4(0, 1, 40, 1),
     new THREE.Vector4(-80, 24, 30, 1),
     new THREE.Vector4(-40, 18, 20, 1),
-    new THREE.Vector4(-20, 12, 10, 1),
-    new THREE.Vector4(-3, 12, -8, 1)
+    new THREE.Vector4(-20, 12, -12, 1),
+    new THREE.Vector4(-10, 12, -10, 1),
+    new THREE.Vector4(-5, 12, -9, 1),
+    new THREE.Vector4(0, 12, -8, 1)
 ];
 
 for ( var i = 0, j = cameraControl.length; i < j; i ++ ) {

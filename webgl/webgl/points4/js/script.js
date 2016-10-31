@@ -74,7 +74,8 @@ onload = function() {
     var perspectiveMatrix = m.identity(m.create());
     var eyeDirection = [0.0, 0.0, 100.0];
 
-    var direction = 0.2;
+    var direction = 0.2,
+        angle = 0;
 
     // gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.enable(gl.BLEND);
@@ -90,14 +91,27 @@ onload = function() {
         m.perspective(45, c.width / c.height, 0.1, 1000, perspectiveMatrix);
 
 
-        if (modelPosition.z > 120 || modelPosition.z < -70) direction *= -1;
+        if (modelPosition.z > 70 || modelPosition.z < -90) direction *= -1;
 
         modelPosition.z += direction;
+        angle += 0.01;
 
         m.translate(
         	tmpMatrix,
         	[modelPosition.x, modelPosition.y, modelPosition.z],
         	modelMatrix
+        );
+        m.rotate(
+            modelMatrix,
+            angle,
+            [0, 1, 1],
+            modelMatrix
+        );
+        m.rotate(
+            modelMatrix,
+            angle,
+            [1, 0, 1],
+            modelMatrix
         );
         
         /** modelMatrix 存储的矩阵
