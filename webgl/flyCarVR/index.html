@@ -43,12 +43,23 @@
         text-align: center;
         z-index: 2;
     }
+    .fullscreen-btn {
+        position: absolute;
+        right: 0;
+        top: 12%;
+        min-width: .5rem;
+        min-height: .3rem;
+        padding-right: 5%;
+        padding-top: 4%;
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQ4OC40IDQ4OC40IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0ODguNCA0ODguNDsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+PGc+PHBvbHlnb24gcG9pbnRzPSI0NDEuMSw0MDcuOCAzMzguOCwzMDUuNSAzMDUuNSwzMzguOCA0MDcuOCw0NDEuMSAzMjguMyw0NDEuMSAzMjguMyw0ODguNCA0ODguNCw0ODguNCA0ODguNCwzMjguMyA0NDEuMSwzMjguMyAgICAgICAgICIgZmlsbD0iI2ZmZmZmZiIvPjxwb2x5Z29uIHBvaW50cz0iMzM4LjgsMTgzIDQ0MS4xLDgwLjYgNDQxLjEsMTYwLjEgNDg4LjQsMTYwLjEgNDg4LjQsMCAzMjguMywwIDMyOC4zLDQ3LjMgNDA3LjgsNDcuMyAzMDUuNSwxNDkuNiAgICAiIGZpbGw9IiNmZmZmZmYiLz48cG9seWdvbiBwb2ludHM9IjE0OS42LDMwNS41IDQ3LjMsNDA3LjggNDcuMywzMjguMyAwLDMyOC4zIDAsNDg4LjQgMTYwLjEsNDg4LjQgMTYwLjEsNDQxLjEgODAuNiw0NDEuMSAxODMsMzM4LjggICAgIiBmaWxsPSIjZmZmZmZmIi8+PHBvbHlnb24gcG9pbnRzPSIxNjAuMSw0Ny4zIDE2MC4xLDAgMCwwIDAsMTYwLjEgNDcuMywxNjAuMSA0Ny4zLDgwLjYgMTQ5LjYsMTgzIDE4MywxNDkuNiA4MC42LDQ3LjMgICAgIiBmaWxsPSIjZmZmZmZmIi8+PC9nPjwvc3ZnPg==) 50% 50%/70% 70% no-repeat rgba(0, 0, 0, .35);
+    }
     </style>
 </head>
 
 <body>
 <canvas id="webgl"></canvas>
-<div class="vr-btn" id="vr-btn"></div>
+<div class="vr-btn" id="vrBtn"></div>
+<div class="fullscreen-btn" id="fullscreenBtn"></div>
 <div class="aboard-car" id="aboardCar">上车</div>
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/MTLLoader.js"></script>
@@ -58,39 +69,10 @@
 <script type="text/javascript" src="./js/TweenMax.min.js"></script>
 <script type="text/javascript" src="./js/StereoEffect.js"></script>
 <script type="text/javascript" src="./js/DeviceOrientationControls.js"></script>
-<script type="text/javascript" src="./js/orienter.js"></script>
-<script type="text/javascript" src="./js/Bezier.js"></script>
+<script type="text/javascript" src="./js/NurbsPath.js"></script>
 <script type="text/javascript" src="./js/ground.js"></script>
 <script type="text/javascript" src="./js/roadScene.js"></script>
 <script type="text/javascript">
-window.androidUC = /uc/i.test(window.navigator.userAgent) && /android/i.test(window.navigator.userAgent);
-(function() {
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
-            window[vendors[x] + 'CancelRequestAnimationFrame'];
-    }
-    if (!window.requestAnimationFrame || window.androidUC) {
-        window.requestAnimationFrame = function(callback) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function() {
-                    callback(currTime + timeToCall);
-                },
-                timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
-    }
-    if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
-    }
-    window.RAF = window.requestAnimFrame = window.requestAnimationFrame;
-})();
 
 window.addEventListener('resize', onWindowResize, false);
 
@@ -102,6 +84,12 @@ var camera = new THREE.PerspectiveCamera(90, WIDTH / HEIGHT, 1, 2000);
 camera.position.z = 300;
 camera.position.y = 1;
 camera.lookAt(new THREE.Vector3(0.0, 1.0, -50.0));
+
+// camera.position.x = 30;
+// camera.position.y = 2;
+// camera.position.z = -4;
+// camera.lookAt(new THREE.Vector3(0, 2, -4));
+
 var controls = new THREE.DeviceOrientationControls(camera);
 
 var renderer = new THREE.WebGLRenderer({
@@ -146,72 +134,66 @@ scene.add(directionalLight);
 var car = null;
 var mtlLoader = new THREE.MTLLoader();
 mtlLoader.setPath('./model/');
-mtlLoader.load('car.mtl', function(materials) {
+mtlLoader.load('car7.mtl', function(materials) {
     materials.preload();
     var objLoader = new THREE.OBJLoader();
+    // console.log(materials);
     objLoader.setMaterials(materials);
     objLoader.setPath('./model/');
-    objLoader.load('car.obj', function(object) {
+    objLoader.load('car7.obj', function(object) {
         car = object;
+        // var ms = car.children[0].material.materials;
+        for (var i = 0; i < car.children.length; i++) {
+            var tool = car.children[i];
+            for (var j = 0; j < tool.material.materials.length; j++) {
+                var ms = tool.material.materials[j];
+                // console.log(ms);
+                ms.side = THREE.DoubleSide;
+            }
+        }
+        carStats.wheelF = car.children[0];
+        carStats.wheelB = carStats.wheelF.clone();
+        carStats.wheelF.position.set(0, 0.5, 2.25);
+        carStats.wheelB.position.set(0, 0.5, -2.25);
+        car.add(carStats.wheelB);
+        // car.children[0].material.materials[0].side = THREE.DoubleSide;
+        // car.children[0].material.materials[1].side = THREE.DoubleSide;
+        // car.children[0].material.materials[2].side = THREE.DoubleSide;
+        // car.children[0].material.materials[3].side = THREE.DoubleSide;
+        // car.children[0].material.materials[4].side = THREE.DoubleSide;
+        // car.children[0].material.materials[5].side = THREE.DoubleSide;
         car.rotation.y = Math.PI;
         car.position.z = -8;
-        car.scale.set(7, 7, 7);
+        car.scale.set(5, 5, 5);
         scene.add(car);
+
         carStats.car = car;
     });
 });
 
 var moveEnd = false;
-var berzer = new BeizerPath();
-
-function motion() {
-    berzer.motion(
-        [new THREE.Vector3(0, 1, 300), new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 40, 5), new THREE.Vector3(-3, 12, -8)],
-        6000,
-        'linear',
-        function(point, t) {
-            camera.position.x = point.x;
-            camera.position.y = point.y;
-            camera.position.z = point.z;
-            // var pp = berzer.getPoint([new THREE.Vector3( 0,1,-8 ), new THREE.Vector3( 10, 1, -8 ), new THREE.Vector3( 0,1,-50 )],t);
-            var pp = lookAtCurve.getPoint(t+0.04);
-            camera.lookAt(pp);
-        },
-        function() {
-            camera.position.set(0, 12, -8);
-            camera.lookAt(new THREE.Vector3( 0,1,-50 ));
-            moveEnd = true;
-            if (vrRender) {
-                controls.updateAlphaOffsetAngle(THREE.Math.degToRad(controls.deviceOrientation.alpha + 90));
-            }
-            // vrBtn.style.display = 'block';
-        }
-    );
-}
-// alert(111);
+var nurbsPath = new NurbsPath();
 
 function onWindowResize() {
-
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
-
 }
 
 function animate() {
-
     RAF(animate);
-    // roadScene.speedUp();
-    // camera.rotation.y += 0.008;
     render();
-
 }
 
 function render() {
     if (moveEnd) {
         upSpeed();
         goPos();
+        carStats.update();
+    }
+    if (carStats.car) {
+        carStats.wheelB.rotation.x = carStats.wheelF.rotation.x = (carStats.wheelF.rotation.x + roadScene.timeScale * 0.17) % Math.PI;
+        // console.log( roadScene.timeScale);
     }
 
     if (!vrRender) {
@@ -219,72 +201,59 @@ function render() {
     } else {
         if (moveEnd) {
             controls.update();
-            carStats.update();
         }
         effect.render(scene, camera);
     }
-
-
 }
 
-var carStats = new CarStats(null, camera, roadScene);
+var carStats = new CarStats({
+    car: null,
+    camera: camera,
+    roadScene: roadScene,
+    control: controls
+});
 
 
-var carBtn = document.getElementById('aboardCar');
-carBtn.addEventListener('click', function(event) {
-    if (car !== null) {
-        carBtn.style.display = 'none';
-        motion();
-    }
-}, false);
-window.addEventListener('deviceorientation', function(event) {
-    carStats.beta = event.beta;
-    carStats.gamma = event.gamma;
-    carStats.alpha = event.alpha;
-}, false);
-window.addEventListener('orientationchange', function(event) {
-    console.log(event);
-}, false);
+function CarStats(options) {
+    options = options || {};
+    this.roadScene = options.roadScene;
+    this.camera = options.camera;
+    this.car = options.car;
+    this.stats = options.control;
 
-function CarStats(car, camera, roadScene) {
-    this.roadScene = roadScene;
-    this.camera = camera;
-    this.car = car;
-    this.beta = 0;
-    this.gamma = 90;
 }
 CarStats.prototype.update = function() {
     if (!this.car) return;
-    var gg = this.gamma > 0 ? -1 : 1;
-    var bb = this.beta > 0 ? -1 : 1;
-    var fixB = gg < 0 ? 180 : 0;
+    this.fix();
 
-    var rad = bb * gg * THREE.Math.degToRad(fixB - Math.abs(this.beta)) * 0.6;
-
-    this.car.rotation.y = Math.PI - rad;
-    this.camera.position.x = this.car.position.x = THREE.Math.clamp(this.car.position.x + rad * 2, -32, 32);
-    if (gg * (90 - Math.abs(this.gamma)) > 20) {
+    this.car.rotation.y = Math.PI - THREE.Math.degToRad(this.rotateZ) * 0.6;
+    this.camera.position.x = this.car.position.x = THREE.Math.clamp(this.car.position.x + this.rotateZ * 0.05, -32, 32);
+    if (this.rotateX < -10) {
         this.roadScene.speedUp();
-    } else if (gg * (90 - Math.abs(this.gamma)) < -5) {
+    } else if (this.rotateX > 10) {
         this.roadScene.speedDown();
     }
-    // document.getElementById('infor_blank').innerHTML = gg*(90-Math.abs(this.gamma))>>0;
 };
-CarStats.prototype.solution = function() {
-    var orientation = window.orientation || 0;
+CarStats.prototype.fix = function() {
+    var flipX = this.stats.deviceOrientation.gamma < 0 ? -1 : 1;
+    var flipY = this.stats.deviceOrientation.beta < 0 ? -1 : 1;
+    switch (this.stats.screenOrientation) {
+        case 0:
+            this.rotateX = this.stats.deviceOrientation.beta - 90;
+            this.rotateZ = this.rotateX > 0 ? -this.stats.deviceOrientation.gamma : this.stats.deviceOrientation.gamma;
+            break;
+        case 90:
+            this.rotateX = flipX * (90 - Math.abs(this.stats.deviceOrientation.gamma));
+            this.rotateZ = this.rotateX > 0 ? flipY * (180 - Math.abs(this.stats.deviceOrientation.beta)) : this.stats.deviceOrientation.beta;
+            break;
+        case -90:
+            this.rotateX = -flipX * (90 - Math.abs(this.stats.deviceOrientation.gamma));
+            this.rotateZ = this.rotateX > 0 ? -flipY * (180 - Math.abs(this.stats.deviceOrientation.beta)) : -this.stats.deviceOrientation.beta;
+            break;
+    }
 };
 
 animate();
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -294,16 +263,59 @@ renderer.domElement.addEventListener('click', function() {
         vrRender = false;
         exitFullscreen();
         vrBtn.style.display = 'block';
+        fullBtn.style.display = 'block';
         camera.lookAt(new THREE.Vector3(0.0, 1.0, -50.0));
         onWindowResize();
     }
 });
-var vrBtn = document.getElementById('vr-btn');
+var vrBtn = document.getElementById('vrBtn');
 vrBtn.addEventListener('click', function() {
-    launchFullScreen(document.body);
-    vrRender = true;
-    vrBtn.style.display = 'none';
+        launchFullScreen(document.body);
+        vrRender = true;
+        vrBtn.style.display = 'none';
+        fullBtn.style.display = 'none';
 });
+var fullBtn = document.getElementById('fullscreenBtn');
+fullBtn.addEventListener('click', function() {
+    if (!fullBtn.inFull) {
+        launchFullScreen(document.body);
+        fullBtn.inFull = true;
+    } else {
+        exitFullscreen();
+        fullBtn.inFull = false;
+    }
+});
+var carBtn = document.getElementById('aboardCar');
+carBtn.addEventListener('click', function(event) {
+    if (car !== null) {
+        var t = 5;
+        carBtn.innerHTML = t;
+        var timer = setInterval(function(){
+            carBtn.innerHTML = --t;
+        }, 1000);
+        setTimeout(function(){
+            carBtn.style.display = 'none';
+            nurbsPath.motion(
+                8000,
+                'linear',
+                function(point, t) {
+                    camera.position.x = point.x;
+                    camera.position.y = point.y;
+                    camera.position.z = point.z;
+                    camera.lookAt(lookAtCurve.getPoint(t));
+                },
+                function() {
+                    camera.position.set(0, 12, -8);
+                    camera.lookAt(new THREE.Vector3( 0,1,-50 ));
+                    moveEnd = true;
+                    if (vrRender) {
+                        controls.updateAlphaOffsetAngle(Math.PI/2);
+                    }
+                }
+            );
+        },5e3);
+    }
+}, false);
 
 function launchFullScreen(element) {
     if (element.requestFullscreen) {

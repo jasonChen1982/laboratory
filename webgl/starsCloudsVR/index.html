@@ -23,11 +23,11 @@
     void main() {
         vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
-        float alpha = 40.0/length(mvPosition.xyz);
+        float alpha = 50.0/length(mvPosition.xyz);
         vColor = vec4(customColor,alpha);
 
 
-        gl_PointSize = size;
+        gl_PointSize = size * 4.0;
 
         gl_Position = projectionMatrix * mvPosition;
 
@@ -144,8 +144,8 @@ function init() {
         colors[ i3 + 1 ] = 1.0;
         colors[ i3 + 2 ] = 0.9;
 
-        var rr = Math.random()<0.1,
-            bb = rr?1.4:6.0;
+        var rr = Math.random()<0.4,
+            bb = rr?8.0:3.0;
             sizes[ i ] = Math.random()*bb;
     }
 
@@ -201,7 +201,7 @@ function init() {
     });
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( WIDTH, HEIGHT );
-    renderer.setClearColor(0x010632);
+    renderer.setClearColor(0x010216);
     effect = new THREE.StereoEffect(renderer);
 
 
@@ -307,11 +307,11 @@ function goto(){
         iNowPage++;
         if(iNowPage*3+3>=aPoints.length)iNowPage=0;
         clickBtn = true;
-        setTimeout(goto,16e3);
+        setTimeout(goto,6e3);
     });
 }
 
-setTimeout(goto,20e3);
+setTimeout(goto,15e3);
 
 
 </script>

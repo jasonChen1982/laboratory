@@ -27,7 +27,7 @@ function PutStar(opts) {
 
 
     this.line = new THREE.BufferGeometry();
-    this.materialLine = new THREE.LineBasicMaterial({ transparent:true, color: 0x5163A5 });
+    this.materialLine = new THREE.LineBasicMaterial({ transparent:true, color: 0x89a8ff });
     this.materialLine.opacity = 0;
 
     this.line.addAttribute( 'position', new THREE.BufferAttribute( this.vertexs, 3 ) );
@@ -40,6 +40,7 @@ function PutStar(opts) {
     this.group.position.x = opts.position.x;
     this.group.position.y = opts.position.y;
     this.group.position.z = opts.position.z;
+    this.group.scale.set(1.5,1.5,1.5);
     this.group.add( this.starMesh,this.lineMesh );//
 };
 PutStar.prototype.showLine = function() {
@@ -55,9 +56,9 @@ PutStar.prototype.showLine = function() {
         var time = Date.now() * 0.005;
         opacity += opacitySpeed;
         if(opacity>1) opacity = 1.0;
-        This.materialLine.opacity = Math.min(opacity,0.3);
+        This.materialLine.opacity = Math.min(opacity,0.5);
         for ( var i = 0; i < l; i++ ) {
-            This.sizes[ i ] = 3 + 2*( 1 + Math.sin( 0.3 * i + time ) );
+            This.sizes[ i ] = 6 + 2*( 1 + Math.sin( 0.3 * i + time ) );
         }
 
         This.star.attributes.size.needsUpdate = true;

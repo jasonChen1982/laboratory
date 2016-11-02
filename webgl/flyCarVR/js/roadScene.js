@@ -3,6 +3,7 @@ function RoadScene(options) {
     this.doc = new THREE.Group();
 
     this.tweenMax = new TimelineMax({ paused: true });
+    this.timeScale = 1;
 
     this.init();
 }
@@ -134,22 +135,22 @@ RoadScene.prototype.buildRoom = function() {
 };
 RoadScene.prototype.speedUp = function(speed) {
     speed = speed || 0.01;
-    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() + speed, 0.4, 8);
+    this.timeScale = THREE.Math.clamp(this.tweenMax.timeScale() + speed, 0.4, 8);
     // console.log();
-    this.tweenMax.timeScale(timeScale);
-    this.changeSpeed(timeScale);
+    this.tweenMax.timeScale(this.timeScale);
+    this.changeSpeed();
     // return timeScale;
 };
 RoadScene.prototype.speedDown = function() {
-    var timeScale = THREE.Math.clamp(this.tweenMax.timeScale() - 0.04, 0.4, 8);
+    this.timeScale = THREE.Math.clamp(this.tweenMax.timeScale() - 0.04, 0.4, 8);
     // console.log();
-    this.tweenMax.timeScale(timeScale);
-    this.changeSpeed(timeScale);
+    this.tweenMax.timeScale(this.timeScale);
+    this.changeSpeed();
     // return timeScale;
 };
-RoadScene.prototype.changeSpeed = function(timeScale) {
+RoadScene.prototype.changeSpeed = function() {
     var l = this.roomTween.length;
     for (var i = 0; i < l; i++) {
-        this.roomTween[i].timeScale(timeScale);
+        this.roomTween[i].timeScale(this.timeScale);
     }
 };

@@ -162,19 +162,41 @@ markerRoot.matrixAutoUpdate = false;
 camera.matrixAutoUpdate = false;
 
 
-var mtlLoader = new THREE.MTLLoader();
-mtlLoader.setPath('./model/');
-mtlLoader.load('tree.mtl', function(materials) {
+var treeLoader = new THREE.MTLLoader();
+treeLoader.setPath('./model/');
+treeLoader.load('tree.mtl', function(materials) {
     materials.preload();
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setMaterials(materials);
-    objLoader.setPath('./model/');
-    objLoader.load('tree.obj', function(object) {
-        object.scale.set(0.8, 0.8, 0.8);
+    var treeLoader = new THREE.OBJLoader();
+    treeLoader.setMaterials(materials);
+    treeLoader.setPath('./model/');
+    treeLoader.load('tree.obj', function(object) {
+        object.scale.set(0.9, 0.9, 0.9);
+        object.position.x = .3;
         object.rotation.x = Math.PI/2;
         markerRoot.add(object);
     });
 });
+
+
+// var carLoader = new THREE.MTLLoader();
+// carLoader.setPath('./model/');
+// carLoader.load('car.mtl', function(materials) {
+//     materials.preload();
+//     var carLoader = new THREE.OBJLoader();
+//     carLoader.setMaterials(materials);
+//     carLoader.setPath('./model/');
+//     carLoader.load('car.obj', function(object) {
+
+//         var ms = object.children[0].material.materials;
+//         for (var i = 0; i < ms.length; i++) {
+//             ms[i].side = THREE.DoubleSide;
+//         }
+//         object.scale.set(0.4, 0.4, 0.4);
+//         object.position.x = -1.2;
+//         object.rotation.x = Math.PI/2;
+//         markerRoot.add(object);
+//     });
+// });
 
 // Add the marker root to your scene.
 scene.add(markerRoot);

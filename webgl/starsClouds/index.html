@@ -23,7 +23,7 @@
         vColor = vec4(customColor,alpha);
 
 
-        gl_PointSize = size;
+        gl_PointSize = size * 2.0;
 
         gl_Position = projectionMatrix * mvPosition;
 
@@ -173,7 +173,7 @@ function init() {
     });
     // renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( WIDTH, HEIGHT );
-    renderer.setClearColor(0x010632);
+    renderer.setClearColor(0x010216);
 
 
     window.addEventListener( 'resize', onWindowResize, false );

@@ -5537,6 +5537,7 @@ THREE.Matrix4.prototype = {
 		var b = ( top + bottom ) / ( top - bottom );
 		var c = - ( far + near ) / ( far - near );
 		var d = - 2 * far * near / ( far - near );
+		console.log(x, y, a, b, c, d);
 
 		te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a;	te[ 12 ] = 0;
 		te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b;	te[ 13 ] = 0;
