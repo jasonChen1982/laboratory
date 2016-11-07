@@ -113,11 +113,17 @@
             width: 6.4rem;
             height: 4.8rem;
         }
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 4.8rem;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-<video id="v" src="Data/output_4.ogg" width="640" height="480" loop="" controls="" autoplay>不支持</video>
+<video id="v" src="Data/video2.mp4" width="640" height="480" loop="" controls="">不支持</video>
 <canvas id="WebAR"></canvas>
 
 <script type="text/javascript" src="./js/three.min.js"></script>
@@ -178,31 +184,36 @@ treeLoader.load('tree.mtl', function(materials) {
 });
 
 
-// var carLoader = new THREE.MTLLoader();
-// carLoader.setPath('./model/');
-// carLoader.load('car.mtl', function(materials) {
-//     materials.preload();
-//     var carLoader = new THREE.OBJLoader();
-//     carLoader.setMaterials(materials);
-//     carLoader.setPath('./model/');
-//     carLoader.load('car.obj', function(object) {
+var carLoader = new THREE.MTLLoader();
+carLoader.setPath('./model/');
+carLoader.load('car.mtl', function(materials) {
+    materials.preload();
+    var carLoader = new THREE.OBJLoader();
+    carLoader.setMaterials(materials);
+    carLoader.setPath('./model/');
+    carLoader.load('car.obj', function(object) {
 
-//         var ms = object.children[0].material.materials;
-//         for (var i = 0; i < ms.length; i++) {
-//             ms[i].side = THREE.DoubleSide;
-//         }
-//         object.scale.set(0.4, 0.4, 0.4);
-//         object.position.x = -1.2;
-//         object.rotation.x = Math.PI/2;
-//         markerRoot.add(object);
-//     });
-// });
+        var ms = object.children[0].material.materials;
+        for (var i = 0; i < ms.length; i++) {
+            ms[i].side = THREE.DoubleSide;
+        }
+        object.scale.set(0.4, 0.4, 0.4);
+        object.position.x = -1.2;
+        object.rotation.x = Math.PI/2;
+        markerRoot.add(object);
+    });
+});
 
 // Add the marker root to your scene.
 scene.add(markerRoot);
 var arController = null;
 
 var video = document.getElementById('v');
+
+document.onclick =  function (){
+    console.log(1111);
+    video.play();
+}
 
 // On every frame do the following:
 function tick() {
@@ -225,6 +236,8 @@ function tick() {
     } else {
         markerRoot.visible = false;
     }
+    // console.log(markerNum);
+    // arController.debugDraw();
 
     renderer.render(scene, camera);
 }
@@ -235,6 +248,8 @@ var cameraParam = new ARCameraParam();
 cameraParam.onload = function() {
 
     arController = new ARController(v.width, v.height, cameraParam);
+
+    // arController.debugSetup();
 
     var camera_mat = arController.getCameraMatrix();
 
