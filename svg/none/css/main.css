@@ -1,11 +1,5 @@
-body{
-	margin:0;
-	font-family:'Microsoft YaHei',"ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
-	text-align:center;
-	background:#f3f3f3;
-	background:-webkit-gradient(radial,center center,0px,center center,100%,color-stop(0%,#f3f3f3),color-stop(100%,#6c5299));
-	background:-webkit-radial-gradient(center,ellipse cover,#f3f3f3 0,#cfcfd0 100%);
-	background:-webkit-radial-gradient(center,ellipse,#f3f3f3 0,#cfcfd0 100%);
-	background:radial-gradient(ellipse at center,#f3f3f3 0,#cfcfd0 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f3f3f3',endColorstr='#cfcfd0',GradientType=1)
+body {
+    margin: 0;
+    text-align: center;
+    background: transparent;
 }
