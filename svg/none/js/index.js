@@ -63,7 +63,7 @@ Bubble.prototype.update = function() {
     /* 柱状喷泉式泡泡 */
 function Stage() {
 		this.max = 80;
-		this.flow = 30;
+		this.flow = 40;
 		this.doc = s.paper.g().attr({id: 'group'});
     this.doc.attr({ transform: 'matrix(1,0,0,1,' + 350 + ',' + 450 + ')' });
     this.childs = [];
