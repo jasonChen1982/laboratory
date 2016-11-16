@@ -148,7 +148,7 @@ Sphere.prototype.buildMesh = function() {
             this.index.push([r, r + this.column + 1, r + this.column + 2, r + 1]);
             this.colors.push(random(COLORS));
             this.lines.push(random(1,1.2));
-            this.froces.push([random(0.04,0.1),random(-0.004,-0.0008)]);
+            this.froces.push([random(0.04,0.06),random(-0.004,-0.0008)]);
         }
     }
 };
@@ -156,7 +156,7 @@ Sphere.prototype.boom = function() {
     if(!this.isSleep)return;
     for (var j = 0; j < this.lines.length; j++) {
         this.lines[j] = random(1,1.2);
-        this.froces[j] = [random(0.04,0.1),random(-0.004,-0.0008)];
+        this.froces[j] = [random(0.04,0.06),random(-0.004,-0.0008)];
     }
     this.isSleep = false;
 };
