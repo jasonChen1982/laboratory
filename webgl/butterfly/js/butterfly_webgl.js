@@ -1,4 +1,4 @@
-var JCM = new Martix();
+var JCM = new Matrix();
 function Vertex3(x,y,z){
     this.x = x||0;
     this.y = y||0;

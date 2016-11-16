@@ -61,6 +61,7 @@
 <div class="vr-btn" id="vrBtn"></div>
 <div class="fullscreen-btn" id="fullscreenBtn"></div>
 <div class="aboard-car" id="aboardCar">上车</div>
+<audio id="bgAudio" src="./sound/fly-car.wav" loop="loop" autoplay="autoplay"></audio>
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/MTLLoader.js"></script>
 <script type="text/javascript" src="./js/OBJLoader.js"></script>
@@ -268,6 +269,7 @@ renderer.domElement.addEventListener('click', function() {
         onWindowResize();
     }
 });
+var audio = document.getElementById('bgAudio');
 var vrBtn = document.getElementById('vrBtn');
 vrBtn.addEventListener('click', function() {
         launchFullScreen(document.body);
@@ -288,6 +290,7 @@ fullBtn.addEventListener('click', function() {
 var carBtn = document.getElementById('aboardCar');
 carBtn.addEventListener('click', function(event) {
     if (car !== null) {
+        audio.play();
         var t = 5;
         carBtn.innerHTML = t;
         var timer = setInterval(function(){
