@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo</title>
+    <style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    body {
+        position: relative;
+        overflow: hidden;
+        background-color: #8bf2ff;
+    }
+    
+    .vr-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 20;
+        min-width: .5rem;
+        min-height: .3rem;
+        padding-right: 5%;
+        padding-top: 4%;
+        background: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20245.82%20141.73%22%3E%3Cdefs%3E%3Cstyle%3E.a%7Bfill%3A%23fff%3Bfill-rule%3Aevenodd%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3Emask%3C%2Ftitle%3E%3Cpath%20class%3D%22a%22%20d%3D%22M175.56%2C111.37c-22.52%2C0-40.77-18.84-40.77-42.07S153%2C27.24%2C175.56%2C27.24s40.77%2C18.84%2C40.77%2C42.07S198.08%2C111.37%2C175.56%2C111.37ZM26.84%2C69.31c0-23.23%2C18.25-42.07%2C40.77-42.07s40.77%2C18.84%2C40.77%2C42.07-18.26%2C42.07-40.77%2C42.07S26.84%2C92.54%2C26.84%2C69.31ZM27.27%2C0C11.54%2C0%2C0%2C12.34%2C0%2C28.58V110.9c0%2C16.24%2C11.54%2C30.83%2C27.27%2C30.83H99.57c2.17%2C0%2C4.19-1.83%2C5.4-3.7L116.47%2C118a8%2C8%2C0%2C0%2C1%2C12.52-.18l11.51%2C20.34c1.2%2C1.86%2C3.22%2C3.61%2C5.39%2C3.61h72.29c15.74%2C0%2C27.63-14.6%2C27.63-30.83V28.58C245.82%2C12.34%2C233.93%2C0%2C218.19%2C0H27.27Z%22%2F%3E%3C%2Fsvg%3E) 50% 50%/70% 70% no-repeat rgba(0, 0, 0, .35);
+    }
+    
+    .aboard-car {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        width: 100px;
+        height: 30px;
+        margin: -15px 0 0 -50px;
+        background-color: #ff0;
+        border-radius: 6px;
+        line-height: 30px;
+        text-align: center;
+        z-index: 2;
+    }
+    .fullscreen-btn {
+        position: absolute;
+        right: 0;
+        top: 12%;
+        min-width: .5rem;
+        min-height: .3rem;
+        padding-right: 5%;
+        padding-top: 4%;
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQ4OC40IDQ4OC40IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0ODguNCA0ODguNDsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCI+PGc+PHBvbHlnb24gcG9pbnRzPSI0NDEuMSw0MDcuOCAzMzguOCwzMDUuNSAzMDUuNSwzMzguOCA0MDcuOCw0NDEuMSAzMjguMyw0NDEuMSAzMjguMyw0ODguNCA0ODguNCw0ODguNCA0ODguNCwzMjguMyA0NDEuMSwzMjguMyAgICAgICAgICIgZmlsbD0iI2ZmZmZmZiIvPjxwb2x5Z29uIHBvaW50cz0iMzM4LjgsMTgzIDQ0MS4xLDgwLjYgNDQxLjEsMTYwLjEgNDg4LjQsMTYwLjEgNDg4LjQsMCAzMjguMywwIDMyOC4zLDQ3LjMgNDA3LjgsNDcuMyAzMDUuNSwxNDkuNiAgICAiIGZpbGw9IiNmZmZmZmYiLz48cG9seWdvbiBwb2ludHM9IjE0OS42LDMwNS41IDQ3LjMsNDA3LjggNDcuMywzMjguMyAwLDMyOC4zIDAsNDg4LjQgMTYwLjEsNDg4LjQgMTYwLjEsNDQxLjEgODAuNiw0NDEuMSAxODMsMzM4LjggICAgIiBmaWxsPSIjZmZmZmZmIi8+PHBvbHlnb24gcG9pbnRzPSIxNjAuMSw0Ny4zIDE2MC4xLDAgMCwwIDAsMTYwLjEgNDcuMywxNjAuMSA0Ny4zLDgwLjYgMTQ5LjYsMTgzIDE4MywxNDkuNiA4MC42LDQ3LjMgICAgIiBmaWxsPSIjZmZmZmZmIi8+PC9nPjwvc3ZnPg==) 50% 50%/70% 70% no-repeat rgba(0, 0, 0, .35);
+    }
+    </style>
+</head>
+
+<body>
+<canvas id="webgl"></canvas>
+<div class="vr-btn" id="vrBtn"></div>
+<div class="fullscreen-btn" id="fullscreenBtn"></div>
+<script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript" src="./js/NURBSCurve.js"></script>
+<script type="text/javascript" src="./js/NURBSUtils.js"></script>
+<script type="text/javascript" src="./js/TweenMax.min.js"></script>
+<script type="text/javascript" src="./js/StereoEffect.js"></script>
+<script type="text/javascript" src="./js/DeviceOrientationControls.js"></script>
+<script type="text/javascript" src="./js/cloud.js"></script>
+<script type="text/javascript">
+
+window.addEventListener('resize', onWindowResize, false);
+
+var WIDTH = window.innerWidth;
+var HEIGHT = window.innerHeight;
+var vrRender = false;
+
+var camera = new THREE.PerspectiveCamera(90, WIDTH / HEIGHT, 1, 2000);
+camera.position.z = 5;
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+// camera.position.x = 30;
+// camera.position.y = 2;
+// camera.position.z = -4;
+// camera.lookAt(new THREE.Vector3(0, 2, -4));
+
+var renderer = new THREE.WebGLRenderer({
+    canvas: document.getElementById('webgl')
+});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(WIDTH, HEIGHT);
+renderer.setClearColor(0xc5b9ee);
+
+
+var scene = new THREE.Scene();
+var group = new THREE.Group();
+scene.add(group);
+
+var cc = new Cloud();
+group.add(cc.mesh);
+
+var ambient = new THREE.AmbientLight(0xaaaaaa);
+scene.add(ambient);
+
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+// directionalLight.castShadow = true;
+directionalLight.position.set(0, 100, 100).normalize();
+scene.add(directionalLight);
+
+var config = {
+    land: {
+        color: new THREE.Color(0x58afac),
+    },
+    Sphere: {
+        transparent: true,
+        opacity: 0.3,
+        color: new THREE.Color(0x6e49fa),
+    },
+    sea: {
+        color: new THREE.Color(0x4a89e0),
+    },
+};
+
+// BEGIN Clara.io JSON loader code
+var objectLoader = new THREE.ObjectLoader();
+objectLoader.load("./model/earth.json", function ( obj ) {
+    // window.aaa = obj;
+    // console.log(obj);
+    for(var i=0;i<obj.children.length;i++){
+        var o = obj.children[i],
+            name = o.name,
+            mt = o.children[0].material,
+            map = config[name];
+        // o.children[0].castShadow = true;
+        // o.children[0].receiveShadow = true;
+        for(var v in map){
+            mt[v] = map[v];
+        }
+    }
+    group.add( obj );
+} );
+// END Clara.io JSON loader code
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+animate();
+function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.003;
+    render();
+}
+function render() {
+    renderer.render(scene, camera);
+}
+</script>
+</body>
+
+</html>
