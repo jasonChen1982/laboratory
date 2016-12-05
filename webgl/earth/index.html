@@ -37,6 +37,8 @@
 <canvas id="webgl"></canvas>
 <div class="vr-btn" id="vrBtn"></div>
 <script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript" src="./js/MTLLoader.js"></script>
+<script type="text/javascript" src="./js/OBJLoader.js"></script>
 <script type="text/javascript" src="./js/NURBSCurve.js"></script>
 <script type="text/javascript" src="./js/NURBSUtils.js"></script>
 <script type="text/javascript" src="./js/TweenMax.min.js"></script>
@@ -119,9 +121,25 @@ objectLoader.load("./model/earth.json", function ( obj ) {
             mt[v] = map[v];
         }
     }
-    earth.add( obj );
+    // earth.add( obj );
 } );
 // END Clara.io JSON loader code
+
+
+var mtlLoader = new THREE.MTLLoader();
+mtlLoader.setPath('./model/');
+mtlLoader.load('earth.mtl', function(materials) {
+    materials.preload();
+    var objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials(materials);
+    objLoader.setPath('./model/');
+    objLoader.load('earth.obj', function(object) {
+        object.scale.set(0.6, 0.6, 0.6);
+        // window.earth = object;
+        earth.add( object );
+        // tryBuild();
+    });
+});
 
 var nurbsPath = new NurbsPath();
 nurbsPath.motion(
