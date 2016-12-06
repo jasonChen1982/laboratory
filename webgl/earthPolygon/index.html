@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo</title>
+    <style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    body {
+        position: relative;
+        overflow: hidden;
+        background-color: #c5b9ee;
+    }
+    
+    </style>
+</head>
+
+<body>
+<canvas id="webgl"></canvas>
+<script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript" src="./js/MTLLoader.js"></script>
+<script type="text/javascript" src="./js/OBJLoader.js"></script>
+<script type="text/javascript" src="./js/NURBSCurve.js"></script>
+<script type="text/javascript" src="./js/NURBSUtils.js"></script>
+<script type="text/javascript" src="./js/TweenMax.min.js"></script>
+<script type="text/javascript" src="./js/StereoEffect.js"></script>
+<script type="text/javascript" src="./js/DeviceOrientationControls.js"></script>
+<script type="text/javascript" src="./js/NurbsPath.js"></script>
+<script type="text/javascript" src="./js/cloud.js"></script>
+<script type="text/javascript">
+
+window.addEventListener('resize', onWindowResize, false);
+
+var WIDTH = window.innerWidth;
+var HEIGHT = window.innerHeight;
+var vrRender = false;
+
+var camera = new THREE.PerspectiveCamera(90, WIDTH / HEIGHT, 0.01, 100);
+camera.position.z = 6;
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+// camera.position.x = 30;
+// camera.position.y = 2;
+// camera.position.z = -4;
+// camera.lookAt(new THREE.Vector3(0, 2, -4));
+
+var renderer = new THREE.WebGLRenderer({
+    canvas: document.getElementById('webgl')
+});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(WIDTH, HEIGHT);
+renderer.setClearColor(0xc5b9ee);
+
+
+var scene = new THREE.Scene();
+var skySpace = new THREE.Group();
+var earth = new THREE.Group();
+scene.add(skySpace,earth);
+
+var cc = new Cloud();
+skySpace.add(cc.mesh);
+
+var ambient = new THREE.AmbientLight(0x999999);
+scene.add(ambient);
+
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+directionalLight.castShadow = true;
+directionalLight.position.set(0, 10, 10).normalize();
+scene.add(directionalLight);
+
+var config = {
+    land: {
+        color: new THREE.Color(0x58afac),
+    },
+    Sphere: {
+        transparent: true,
+        opacity: 0.3,
+        color: new THREE.Color(0x6e49fa),
+    },
+    sea: {
+        color: new THREE.Color(0x4a89e0),
+    },
+};
+
+// BEGIN Clara.io JSON loader code
+var objectLoader = new THREE.ObjectLoader();
+objectLoader.load("./model/earth.json", function ( obj ) {
+    // window.aaa = obj;
+    // console.log(obj);
+    for(var i=0;i<obj.children.length;i++){
+        var o = obj.children[i],
+            name = o.name,
+            mt = o.children[0].material,
+            map = config[name];
+        // if(name === 'land'){
+        //     o.castShadow = true;
+        // } else {
+        //     o.receiveShadow = true;
+        // }
+        
+        for(var v in map){
+            mt[v] = map[v];
+        }
+    }
+    earth.add( obj );
+} );
+// END Clara.io JSON loader code
+
+
+// var mtlLoader = new THREE.MTLLoader();
+// mtlLoader.setPath('./model/');
+// mtlLoader.load('earth.mtl', function(materials) {
+//     materials.preload();
+//     var objLoader = new THREE.OBJLoader();
+//     objLoader.setMaterials(materials);
+//     objLoader.setPath('./model/');
+//     objLoader.load('earth.obj', function(object) {
+//         object.scale.set(0.6, 0.6, 0.6);
+//         // window.earth = object;
+//         earth.add( object );
+//         // tryBuild();
+//     });
+// });
+
+var nurbsPath = new NurbsPath();
+nurbsPath.motion(
+    10000,
+    'easeBoth',
+    function(point, t) {
+        camera.position.x = point.x;
+        camera.position.y = point.y;
+        camera.position.z = point.z;
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+    },
+    function() {
+    }
+);
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+animate();
+function animate() {
+    requestAnimationFrame(animate);
+    skySpace.rotation.y += 0.001;
+    // earth.rotation.y += 0.0002;
+    render();
+}
+function render() {
+    renderer.render(scene, camera);
+}
+</script>
+</body>
+
+</html>
