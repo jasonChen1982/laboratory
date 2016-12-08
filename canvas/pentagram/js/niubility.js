@@ -350,7 +350,7 @@ Stage.prototype.animate = function() {
     var This = this;
 
     function render() {
-        stats.update();
+        // stats.update();
         This.render();
         This.isAnimating && window.RAF(render);
     }
@@ -393,10 +393,10 @@ ImagesLoad.prototype.getImg = function(id) {
 };
 
 
-var stats = new Stats();
-    stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.top = '0px';
-    document.body.appendChild(stats.domElement);
+// var stats = new Stats();
+//     stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+//     stats.domElement.style.position = 'absolute';
+//     stats.domElement.style.top = '0px';
+//     document.body.appendChild(stats.domElement);
 // exports.Stage = Stage;
 // exports.ImagesLoad = ImagesLoad;
