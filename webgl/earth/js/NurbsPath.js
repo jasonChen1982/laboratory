@@ -28,6 +28,42 @@ window.androidUC = /uc/i.test(window.navigator.userAgent) && /android/i.test(win
     }
     window.RAF = window.requestAnimFrame = window.requestAnimationFrame;
 })();
+// lookat NURBS curve
+
+var lookControlPoints = [];
+var lookKnots = [];
+var lookDegree = 3;
+
+for ( var i = 0; i <= lookDegree; i ++ ) {
+    lookKnots.push( 0 );
+}
+
+var lookControl = [
+    new THREE.Vector4(0.75,1.05,-3),
+    new THREE.Vector4(7.5,10.5,-30),
+    new THREE.Vector4(2,0.5, 4, 1),
+    new THREE.Vector4(4, 1, 1, 1),
+    new THREE.Vector4(0, 4, 0, 1),
+    new THREE.Vector4(0, 3, -2, 1),
+    new THREE.Vector4(0, 2, -3, 1),
+    new THREE.Vector4(-3, 2, -3, 1),
+    new THREE.Vector4(-2, 1, 3, 1),
+    new THREE.Vector4(-1, 1, 4, 1),
+    new THREE.Vector4(0, 0, 6, 1)
+];
+
+for ( var i = 0, j = lookControl.length; i < j; i ++ ) {
+
+    lookControlPoints.push(
+        lookControl[i]
+    );
+
+    var knot = ( i + 1 ) / ( j - lookDegree );
+    lookKnots.push( THREE.Math.clamp( knot, 0, 1 ) );
+
+}
+
+var lookCurve = new THREE.NURBSCurve(lookDegree, lookKnots, lookControlPoints);
 
 // NURBS curve
 
@@ -40,8 +76,8 @@ for ( var i = 0; i <= nurbsDegree; i ++ ) {
 }
 
 var cameraControl = [
-    new THREE.Vector4(0, 0, 10, 1),
-    new THREE.Vector4(0, 0, 8, 1),
+    new THREE.Vector4(0.75,1.05,-3),
+    new THREE.Vector4(7.5,10.5,-30),
     new THREE.Vector4(2,0.5, 4, 1),
     new THREE.Vector4(4, 1, 1, 1),
     new THREE.Vector4(0, 4, 0, 1),

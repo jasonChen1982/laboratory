@@ -54,9 +54,10 @@ var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 var vrRender = false;
 
-var camera = new THREE.PerspectiveCamera(90, WIDTH / HEIGHT, 0.01, 100);
-camera.position.z = 6;
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+var camera = new THREE.PerspectiveCamera(30, WIDTH / HEIGHT, 0.01, 100);
+// camera.position.z = 6;
+camera.position.set(0.75,1.05,-3);
+camera.lookAt(new THREE.Vector3(1, 1.5, -1.6));
 
 // camera.position.x = 30;
 // camera.position.y = 2;
@@ -164,7 +165,7 @@ animate();
 function animate() {
     requestAnimationFrame(animate);
     skySpace.rotation.y += 0.001;
-    // earth.rotation.y += 0.0002;
+    // earth.rotation.y += 0.02;
     render();
 }
 function render() {
