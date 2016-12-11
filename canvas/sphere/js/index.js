@@ -219,6 +219,44 @@ Sphere.prototype.render = function(ctx) {
 
 };
 
+function Text(opts){
+    opts = opts || {};
+    this.font = opts.font||'100 %d Arial';
+    this.text = opts.text||'loading...';
+    this.color = opts.color||'#fedf73';
+    this.textAlign = "center"; // start left center end right
+    this.textBaseline = "middle"; // top bottom middle alphabetic hanging
+
+    this.US = false; // use stroke
+    this.UF = true; // use fill
+
+    this.x = 0;
+    this.y = 100;
+}
+Text.prototype.update = function(pres){
+    pres = pres||0;
+    this.text = pres+'%';
+};
+Text.prototype.render = function(ctx){
+    ctx.save();
+    ctx.transform(1,0,0,1,this.x,this.y);
+    ctx.font = this.font.replace('%d',window.JC.UI.RTP(0.24)+'px');
+    ctx.textAlign = this.textAlign;
+    ctx.textBaseline = this.textBaseline;
+    if(this.UF){
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur=20;
+        ctx.shadowColor="rgba(85,200,228,0.2)";
+        ctx.fillText(this.text,0,0);
+    }
+    if(this.US){
+        ctx.lineWidth = this.lineWidth;
+        ctx.strokeStyle = this.color;
+        ctx.strokeText(this.text,0,0);
+    }
+    ctx.restore();
+};
+
 function Stage(opts) {
     opts = opts || {};
     this.canvas = typeof opts.canvas !== 'string' ? opts.canvas : document.getElementById(opts.canvas);
@@ -242,8 +280,8 @@ Stage.prototype.init = function() {
     });
 };
 Stage.prototype.resize = function (w,h,sw,sh){
-    this.width = this.canvas.width = w||document.documentElement.offsetWidth;
-    this.height = this.canvas.height = h||document.documentElement.offsetHeight;
+    this.width = this.canvas.width = w||window.innerWidth;
+    this.height = this.canvas.height = h||window.innerHeight;
     if(this.setStyle&&sw&&sh){
         this.canvas.style.width = sw+'px';
         this.canvas.style.height = sh+'px';
@@ -269,10 +307,10 @@ Stage.prototype.animate = function() {
 Stage.prototype.render = function() {
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.save();
-    this.ctx.transform(1, 0, 0, 1, this.width >> 1, this.height >> 1);
+    this.ctx.transform(1, 0, 0, 1, this.width >> 1, this.height/2 -80);
     this.ctx.globalAlpha = 1;
     for (var i = 0, l = this.children.length; i < l; i++) {
-        this.children[i].upTransform();
+        this.children[i].upTransform && this.children[i].upTransform();
         this.children[i].render(this.ctx);
     }
     this.ctx.restore();
@@ -281,9 +319,14 @@ Stage.prototype.render = function() {
 var stage = new Stage({
     canvas: 'loading'
 });
+var text = new Text();
+stage.children.push(text);
 stage.resize();
 stage.start();
-
+setInterval(function(){
+    var pre = (Date.now()/100)%100>>0;
+    text.update(pre);
+},100);
 
 
 
