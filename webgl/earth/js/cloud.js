@@ -1,11 +1,11 @@
 function Cloud(){
 	this.mesh = new THREE.Group();
 	
-	var geom = new THREE.BoxGeometry(0.2,0.2,0.2);
+	// var geom = new THREE.BoxGeometry(0.2,0.2,0.2);
 	
-	var mat = new THREE.MeshPhongMaterial({
-		color: new THREE.Color(0xffffff),  
-	});
+	// var mat = new THREE.MeshPhongMaterial({
+	// 	color: new THREE.Color(0xffffff),  
+	// });
 	
 	var nBlocs = 15+(Math.random()*5 >> 0);
 	var space = Math.PI*2/nBlocs;

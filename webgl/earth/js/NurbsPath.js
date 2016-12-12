@@ -39,13 +39,15 @@ for ( var i = 0; i <= lookDegree; i ++ ) {
 }
 
 var lookControl = [
-    new THREE.Vector4(1, 1.5, -1.6, 1),
-    new THREE.Vector4(0.7,1.3,-2.4, 1),
-    new THREE.Vector4(0.4,1.3, -4, 1),
-    new THREE.Vector4(0, 0, 0, 1),
-    new THREE.Vector4(0, 0, 0, 1),
-    new THREE.Vector4(0, 0, 0, 1),
-    new THREE.Vector4(0, 0, 0, 1)
+    new THREE.Vector4(   1, 1.5,-1.6, 1),
+    new THREE.Vector4( 0.5, 1.2,-1.2, 1),
+    new THREE.Vector4(   1,   1,-1.6, 1),
+    new THREE.Vector4( 0.1, 0.5,-1.2, 1),
+    new THREE.Vector4( 0.1,   1,-1.8, 1),
+    new THREE.Vector4( 0.1,   2,-2.5, 1),
+    new THREE.Vector4( 0.1,   2,-1.1, 1),
+    new THREE.Vector4(   0,   1,   0, 1),
+    new THREE.Vector4(   0,   0,   0, 1),
 ];
 
 for ( var i = 0, j = lookControl.length; i < j; i ++ ) {
@@ -60,6 +62,40 @@ for ( var i = 0, j = lookControl.length; i < j; i ++ ) {
 }
 
 var lookCurve = new THREE.NURBSCurve(lookDegree, lookKnots, lookControlPoints);
+
+
+// fog NURBS curve
+
+var fovControlPoints = [];
+var fovKnots = [];
+var fovDegree = 3;
+
+for ( var i = 0; i <= fovDegree; i ++ ) {
+    fovKnots.push( 0 );
+}
+
+var fovControl = [
+    new THREE.Vector4(30, 0, 0, 1),
+    new THREE.Vector4(35, 0, 0, 1),
+    new THREE.Vector4(40, 0, 0, 1),
+    new THREE.Vector4(45, 0, 0, 1),
+    new THREE.Vector4(50, 0, 0, 1),
+    new THREE.Vector4(60, 0, 0, 1),
+    new THREE.Vector4(90, 0, 0, 1),
+];
+
+for ( var i = 0, j = fovControl.length; i < j; i ++ ) {
+
+    fovControlPoints.push(
+        fovControl[i]
+    );
+
+    var knot = ( i + 1 ) / ( j - fovDegree );
+    fovKnots.push( THREE.Math.clamp( knot, 0, 1 ) );
+
+}
+
+var fovCurve = new THREE.NURBSCurve(fovDegree, fovKnots, fovControlPoints);
 
 // NURBS curve
 
