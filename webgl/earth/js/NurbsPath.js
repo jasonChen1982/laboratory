@@ -92,8 +92,7 @@ var cameraControl = [
 ];
 var cameraCurve = new CreatePath(cameraControl);
 
-function NurbsPath(option) {
-    option = option || {};
+function NurbsPath() {
     this.tween = {
         linear: function (t, b, c, d){  //匀速
             return c*t/d + b;
@@ -105,24 +104,26 @@ function NurbsPath(option) {
             return -c/2 * ((--t)*(t-2) - 1) + b;
         }
     };
-    this.path = option.path;
 }
-NurbsPath.prototype.motion = function(c, d, e, f) {
+NurbsPath.prototype.motion = function(options) {
     var g = Date.now(),
-        This = this;
-    c = c || 1000;
-    d = d || 'easeBoth';
+        time = options.time || 1000,
+        fx = options.fx || 'easeBoth',
+        update = options.update || null,
+        cb = options.cb || null,
+        nurbs = options.nurbs,
+        tween = this.tween[fx];
 
     function go() {
         var a = Date.now() - g,
-            stop = a > c,
+            stop = a > time,
             t = 1;
         if (!stop) {
-            t = This.tween[d](a, 0, 1, c);
+            t = tween(a, 0, 1, time);
         }
-        e && e(This.path.getPoint(t), t);
+        update && update(nurbs.getPoint(t), t);
         if (stop) { 
-            f && f();
+            cb && cb();
         } else {
             window.RAF(go);
         } 
