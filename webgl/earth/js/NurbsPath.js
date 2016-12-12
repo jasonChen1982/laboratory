@@ -40,6 +40,8 @@ for ( var i = 0; i <= lookDegree; i ++ ) {
 
 var lookControl = [
     new THREE.Vector4(   1, 1.5,-1.6, 1),
+    new THREE.Vector4( 0.9, 1.4,-1.5, 1),
+    new THREE.Vector4( 0.7, 1.3,-1.4, 1),
     new THREE.Vector4( 0.5, 1.2,-1.2, 1),
     new THREE.Vector4(   1,   1,-1.6, 1),
     new THREE.Vector4( 0.1, 0.5,-1.2, 1),

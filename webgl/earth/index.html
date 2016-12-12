@@ -71,6 +71,8 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(WIDTH, HEIGHT);
 renderer.setClearColor(0xc5b9ee);
 
+var effect = new THREE.StereoEffect(renderer);
+var controls = new THREE.DeviceOrientationControls(camera);
 
 var scene = new THREE.Scene();
 var skySpace = new THREE.Group();
@@ -88,21 +90,6 @@ directionalLight.castShadow = true;
 directionalLight.position.set(0, 10, 10).normalize();
 scene.add(directionalLight);
 
-var config = {
-    land: {
-        color: new THREE.Color(0x58afac),
-    },
-    Sphere: {
-        transparent: true,
-        opacity: 0.3,
-        color: new THREE.Color(0x6e49fa),
-    },
-    sea: {
-        color: new THREE.Color(0x4a89e0),
-    },
-};
-
-
 var mtlLoader = new THREE.MTLLoader();
 mtlLoader.setPath('./model/');
 mtlLoader.load('earth.mtl', function(materials) {
@@ -117,23 +104,32 @@ mtlLoader.load('earth.mtl', function(materials) {
 });
 
 var nurbsPath = new NurbsPath();
-nurbsPath.motion(
-    10000,
-    'easeBoth',
-    function(point, t) {
-        camera.position.x = point.x;
-        camera.position.y = point.y;
-        camera.position.z = point.z;
-        var look = lookCurve.getPoint(t);
-        camera.lookAt(look);
-        var fov = fovCurve.getPoint(t);
-        camera.fov = fov.x;
-        camera.updateProjectionMatrix();
-        // camera.lookAt(new THREE.Vector3(1, 1.5, -1.6));
-    },
-    function() {
-    }
-);
+nurbsPath.moving = false;
+
+
+var btnVr = document.getElementById('vrBtn');
+btnVr.addEventListener('click', function(){
+    if (nurbsPath.moving) return;
+    nurbsPath.moving = true;
+    btnVr.style.display = 'none';
+    nurbsPath.motion(
+        10000,
+        'easeBoth',
+        function(point, t) {
+            camera.position.x = point.x;
+            camera.position.y = point.y;
+            camera.position.z = point.z;
+            var look = lookCurve.getPoint(t);
+            camera.lookAt(look);
+            var fov = fovCurve.getPoint(t);
+            camera.fov = fov.x;
+            camera.updateProjectionMatrix();
+        },
+        function() {
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+        }
+    );
+});
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -144,7 +140,6 @@ animate();
 function animate() {
     requestAnimationFrame(animate);
     skySpace.rotation.y += 0.001;
-    // earth.rotation.y += 0.02;
     render();
 }
 function render() {

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        * {
+            margin: 0;
+        }
+        p {
+            color: #333;
+        }
+        </style>
+    </head>
+    <body>
+    <div>
+        <p id="alpha"></p>
+        <p id="beta"></p>
+        <p id="gamma"></p>
+    </div>
+    <script>
+        window.onerror = function(m){
+            alert(m)
+        }
+        window.addEventListener('deviceorientation', update);
+        var alpha = document.getElementById('alpha');
+        var beta = document.getElementById('beta');
+        var gamma = document.getElementById('gamma');
+        function update(ev){
+            alpha.innerHTML = 'alpha: ' + (ev.alpha >> 0);
+            beta.innerHTML = 'beta: ' + (ev.beta >> 0);
+            gamma.innerHTML = 'gamma: ' + (ev.gamma >> 0);
+        }
+    </script>
+    </body>
+</html>
