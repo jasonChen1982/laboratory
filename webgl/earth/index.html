@@ -102,30 +102,6 @@ var config = {
     },
 };
 
-// BEGIN Clara.io JSON loader code
-var objectLoader = new THREE.ObjectLoader();
-objectLoader.load("./model/earth.json", function ( obj ) {
-    // window.aaa = obj;
-    // console.log(obj);
-    for(var i=0;i<obj.children.length;i++){
-        var o = obj.children[i],
-            name = o.name,
-            mt = o.children[0].material,
-            map = config[name];
-        // if(name === 'land'){
-        //     o.castShadow = true;
-        // } else {
-        //     o.receiveShadow = true;
-        // }
-        
-        for(var v in map){
-            mt[v] = map[v];
-        }
-    }
-    // earth.add( obj );
-} );
-// END Clara.io JSON loader code
-
 
 var mtlLoader = new THREE.MTLLoader();
 mtlLoader.setPath('./model/');
@@ -136,9 +112,7 @@ mtlLoader.load('earth.mtl', function(materials) {
     objLoader.setPath('./model/');
     objLoader.load('earth.obj', function(object) {
         object.scale.set(0.6, 0.6, 0.6);
-        // window.earth = object;
         earth.add( object );
-        // tryBuild();
     });
 });
 
@@ -150,7 +124,9 @@ nurbsPath.motion(
         camera.position.x = point.x;
         camera.position.y = point.y;
         camera.position.z = point.z;
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        // var look = lookCurve.getPoint(t);
+        // camera.lookAt(look);
+        camera.lookAt(new THREE.Vector3(1, 1.5, -1.6));
     },
     function() {
     }
