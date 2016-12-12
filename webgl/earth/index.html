@@ -103,13 +103,17 @@ mtlLoader.load('earth.mtl', function(materials) {
     });
 });
 
-var nurbsPath = new NurbsPath();
+var nurbsPath = new NurbsPath({
+    path: cameraCurve.nurbs,
+});
 nurbsPath.moving = false;
+nurbsPath.moveEnd = false;
 
 
 var btnVr = document.getElementById('vrBtn');
 btnVr.addEventListener('click', function(){
     if (nurbsPath.moving) return;
+    launchFullScreen(document.body);
     nurbsPath.moving = true;
     btnVr.style.display = 'none';
     nurbsPath.motion(
@@ -119,14 +123,16 @@ btnVr.addEventListener('click', function(){
             camera.position.x = point.x;
             camera.position.y = point.y;
             camera.position.z = point.z;
-            var look = lookCurve.getPoint(t);
+            var look = lookCurve.nurbs.getPoint(t);
             camera.lookAt(look);
-            var fov = fovCurve.getPoint(t);
+            var fov = fovCurve.nurbs.getPoint(t);
             camera.fov = fov.x;
             camera.updateProjectionMatrix();
         },
         function() {
+            nurbsPath.moveEnd = true;
             camera.lookAt(new THREE.Vector3(0, 0, 0));
+            controls.updateAlphaOffsetAngle(Math.PI/2);
         }
     );
 });
@@ -140,10 +146,25 @@ animate();
 function animate() {
     requestAnimationFrame(animate);
     skySpace.rotation.y += 0.001;
-    render();
+
+    if (nurbsPath.moving) {    
+        if (nurbsPath.moveEnd) {
+            controls.update();
+        }
+        effect.render(scene, camera);
+    } else {
+        renderer.render(scene, camera);
+    }
 }
-function render() {
-    renderer.render(scene, camera);
+
+function launchFullScreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    }
 }
 </script>
 </body>
