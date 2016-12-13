@@ -15,7 +15,7 @@
     body {
         position: relative;
         overflow: hidden;
-        background-color: #c5b9ee;
+        background-color: #b9dfee;
     }
     
     .vr-btn {
@@ -84,7 +84,7 @@ var renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(WIDTH, HEIGHT);
-renderer.setClearColor(0xc5b9ee);
+renderer.setClearColor(0xb9dfee);
 
 var effect = new THREE.StereoEffect(renderer);
 var controls = new THREE.DeviceOrientationControls(camera);
@@ -97,10 +97,10 @@ scene.add(skySpace,earth);
 var cc = new Cloud();
 skySpace.add(cc.mesh);
 
-var ambient = new THREE.AmbientLight(0x999999);
+var ambient = new THREE.AmbientLight(0xababaa);
 scene.add(ambient);
 
-var directionalLight = new THREE.DirectionalLight(0xffffff);
+var directionalLight = new THREE.DirectionalLight(0xffffd3);
 directionalLight.castShadow = true;
 directionalLight.position.set(0, 10, 10).normalize();
 scene.add(directionalLight);

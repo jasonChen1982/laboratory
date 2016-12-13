@@ -38,10 +38,10 @@ function Cloud(){
 	});
 	window.mat = mat;
 	
-	var nBlocs = 50+(Math.random()*25 >> 0);
+	var nBlocs = 60+(Math.random()*30 >> 0);
 	for (var i=0; i<nBlocs; i++ ){
 		var m = new CloudOne(geom, mat.clone()); 
-		var degX = toRAD * randomRange(50, 130),
+		var degX = toRAD * randomRange(30, 150),
 			degY = toRAD * randomRange(0, 360),
 			radius = randomRange(2.7, 3.2),
 			x = Math.sin(degX) * Math.cos(degY) * radius,
