@@ -44,7 +44,7 @@ Bubble.prototype.init = function() {
     this.x = 0;
     this.y = 0;
     this.speedX = 4 * (Math.random() - 0.5);
-    this.speedY = -6 * (Math.random() + 1);
+    this.speedY = -6.7 * (Math.random() + 1);
 };
 Bubble.prototype.update = function() {
     this.x += this.speedX;
