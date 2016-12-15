@@ -7,7 +7,7 @@ function Cloud(){
 	// 	color: new THREE.Color(0xffffff),  
 	// });
 	
-	var nBlocs = 15+(Math.random()*5 >> 0);
+	var nBlocs = 20+(Math.random()*10 >> 0);
 	var space = Math.PI*2/nBlocs;
 	var This = this;
 
@@ -23,7 +23,7 @@ function Cloud(){
 			for (var i=0; i<nBlocs; i++ ){
 				var degX = toRAD * randomRange(50, 130),
 					degY = space * i + toRAD * randomRange(-5, 5),
-					radius = randomRange(2.7, 3.2),
+					radius = randomRange(3, 3.7),
 					x = Math.sin(degX) * Math.cos(degY) * radius,
 					y = Math.cos(degX) * radius,
 					z = Math.sin(degX) * Math.sin(degY) * radius,
