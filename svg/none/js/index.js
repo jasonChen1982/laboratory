@@ -54,7 +54,7 @@ Bubble.prototype.update = function() {
     if (this.y + this.radius > 0 && this.speedY > 0 && Math.abs(this.speedY) > 1.2) {
         this.y = -this.radius;
         this.speedY *= -0.7;
-    } else if((this.x + this.radius) < -350 || (this.x - this.radius) > 350 || (this.y >= -this.radius && this.speedY > 0)) {
+    } else if((this.x + this.radius) < -600 || (this.x - this.radius) > 600 || (this.y >= -this.radius && this.speedY > 0)) {
         this.init();
     }
 
@@ -71,7 +71,7 @@ function Stage() {
     this.max = 80;
     this.flow = 40;
     this.doc = s.paper.g().attr({id: 'group'});
-    this.doc.attr({ transform: 'matrix(1,0,0,1,' + 350 + ',' + 450 + ')' });
+    this.doc.attr({ transform: 'matrix(1,0,0,1,' + 600 + ',' + 450 + ')' });
     this.childs = [];
     this.pt = 0;
 }
