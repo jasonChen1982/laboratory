@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo</title>
+</head>
+
+<body>
+<script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript">
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+camera.position.z = 30;
+
+var renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setClearColor( 0x000000, 1 );
+document.body.appendChild( renderer.domElement );
+
+var lights = [];
+lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+lights[ 0 ].position.set( 0, 20, 0 );
+lights[ 1 ].position.set( 10, 20, 10 );
+lights[ 2 ].position.set( - 10, - 20, - 10 );
+
+scene.add( lights[ 0 ] );
+scene.add( lights[ 1 ] );
+scene.add( lights[ 2 ] );
+
+var icosa = new THREE.IcosahedronGeometry(5,1);
+var met = new THREE.MeshPhongMaterial( {
+					color: 0x156289,
+					emissive: 0x072534,
+					side: THREE.DoubleSide,
+					shading: THREE.FlatShading
+				});
+var obj = new THREE.Mesh(icosa, met);
+console.log(icosa);
+
+scene.add( obj );
+
+var render = function () {
+
+  requestAnimationFrame( render );
+
+  renderer.render( scene, camera );
+
+};
+
+window.addEventListener( 'resize', function () {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+
+}, false );
+
+render();
+</script>
+</body>
+
+</html>

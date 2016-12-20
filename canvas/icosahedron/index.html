@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo</title>
+    <style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        overflow: hidden;
+    }
+    </style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<script type="text/javascript">
+function Vector3( x, y, z ) {
+	this.x = x || 0;
+	this.y = y || 0;
+	this.z = z || 0;
+}
+Vector3.prototype.copy = function ( v ) {
+    this.x = v.x;
+    this.y = v.y;
+    this.z = v.z;
+    return this;
+};
+Vector3.prototype.add = function ( v ) {
+    this.x += v.x;
+    this.y += v.y;
+    this.z += v.z;
+    return this;
+};
+Vector3.prototype.lerp = function ( v, alpha ) {
+    this.x += ( v.x - this.x ) * alpha;
+    this.y += ( v.y - this.y ) * alpha;
+    this.z += ( v.z - this.z ) * alpha;
+    return this;
+};
+Vector3.prototype.multiplyScalar = function ( scalar ) {
+    this.x *= scalar;
+    this.y *= scalar;
+    this.z *= scalar;
+    return this;
+};
+Vector3.prototype.normalize = function () {
+    return this.divideScalar( this.length() );
+};
+Vector3.prototype.divideScalar = function ( scalar ) {
+    return this.multiplyScalar( 1 / scalar );
+};
+Vector3.prototype.length = function () {
+    return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
+};
+Vector3.prototype.clone = function () {
+    return new Vector3( this.x, this.y, this.z );
+};
+
+function Face3( a, b, c, normal ) {
+
+	this.a = a;
+	this.b = b;
+	this.c = c;
+
+	this.normal = (normal && normal.isVector3) ? normal : new Vector3();
+	this.vertexNormals = Array.isArray( normal ) ? normal : [];
+
+	this.color = new HSL();
+	this.culled = false;
+}
+
+function HSL(h, s, l){
+    this.h = h || 0;
+    this.s = s || 0;
+    this.l = l || 0;
+}
+HSL.prototype.toHsl = function(){
+    return 'hsl('+ this.h+ ','+ this.s +'%,'+ this.l +'%)';
+};
+
+// 欧拉角
+var sin = Math.sin;
+var cos = Math.cos;
+var DTR = Math.PI / 180;
+function Euler(x, y, z) {
+  this.x = x || 0;
+  this.y = y || 0;
+  this.z = z || 0;
+}
+Euler.prototype.updateMatrix = function() {
+    var x = DTR * this.x,
+        y = DTR * this.y,
+        z = DTR * this.z;
+    var xc = cos(x),
+        xs = sin(x);
+    var yc = cos(y),
+        ys = sin(y);
+    var zc = cos(z),
+        zs = sin(z);
+    var m = [];
+
+    m[0] = zc*yc-zs*xs*ys;
+    m[4] = zs*yc+zc*xs*ys;
+    m[8] = -xc*ys;
+
+    m[1] = -zs*xc;
+    m[5] = zc*xc;
+    m[9] = xs;
+
+    m[2] = zc*ys+zs*xs*yc;
+    m[6] = zs*ys-zc*xs*yc;
+    m[10] = xc*yc;
+
+    m[3] = 0;
+    m[7] = 0;
+    m[11] = 0;
+
+    // bottom row
+    m[12] = 0;
+    m[13] = 0;
+    m[14] = 0;
+    m[15] = 1;
+
+    return m;
+};
+
+function Icosahedron( radius, detail ){
+    this.euler = new Euler();
+    this._vertices = [];
+    this.vertices = [];
+    this.faces = [];
+
+	var t = ( 1 + Math.sqrt( 5 ) ) / 2;
+    var vertices = [
+		- 1,  t,  0,    1,  t,  0,   - 1, - t,  0,    1, - t,  0,
+		 0, - 1,  t,    0,  1,  t,    0, - 1, - t,    0,  1, - t,
+		 t,  0, - 1,    t,  0,  1,   - t,  0, - 1,   - t,  0,  1
+	];
+	var indices = [
+		 0, 11,  5,    0,  5,  1,    0,  1,  7,    0,  7, 10,    0, 10, 11,
+		 1,  5,  9,    5, 11,  4,   11, 10,  2,   10,  7,  6,    7,  1,  8,
+		 3,  9,  4,    3,  4,  2,    3,  2,  6,    3,  6,  8,    3,  8,  9,
+		 4,  9,  5,    2,  4, 11,    6,  2, 10,    8,  6,  7,    9,  8,  1
+	];
+
+	var that = this;
+
+    for ( var i = 0, l = vertices.length; i < l; i += 3 ) {
+		prepare( new Vector3( vertices[ i ], vertices[ i + 1 ], vertices[ i + 2 ] ) );
+	}
+
+	var p = this._vertices;
+	var faces = [];
+
+	for ( var i = 0, j = 0, l = indices.length; i < l; i += 3, j ++ ) {
+		var v1 = p[ indices[ i ] ];
+		var v2 = p[ indices[ i + 1 ] ];
+		var v3 = p[ indices[ i + 2 ] ];
+		faces[ j ] = new Face3( v1.index, v2.index, v3.index, [ v1.clone(), v2.clone(), v3.clone() ] );
+	}
+
+	for ( var i = 0, l = faces.length; i < l; i ++ ) {
+		subdivide( faces[ i ], detail );
+	}
+
+	for ( var i = 0, l = this._vertices.length; i < l; i ++ ) {
+		this._vertices[ i ].multiplyScalar( radius );
+	}
+
+	function prepare( vector ) {
+		var vertex = vector.normalize().clone();
+		vertex.index = that._vertices.push( vertex ) - 1;
+		return vertex;
+	}
+
+	function make( v1, v2, v3 ) {
+		var face = new Face3( v1.index, v2.index, v3.index, [ v1.clone(), v2.clone(), v3.clone() ] );
+		that.faces.push( face );
+	}
+
+	function subdivide( face, detail ) {
+		var cols = Math.pow( 2, detail );
+		var a = prepare( that._vertices[ face.a ] );
+		var b = prepare( that._vertices[ face.b ] );
+		var c = prepare( that._vertices[ face.c ] );
+		var v = [];
+
+		for ( var i = 0 ; i <= cols; i ++ ) {
+			v[ i ] = [];
+			var aj = prepare( a.clone().lerp( c, i / cols ) );
+			var bj = prepare( b.clone().lerp( c, i / cols ) );
+			var rows = cols - i;
+			for ( var j = 0; j <= rows; j ++ ) {
+				if ( j === 0 && i === cols ) {
+					v[ i ][ j ] = aj;
+				} else {
+					v[ i ][ j ] = prepare( aj.clone().lerp( bj, j / rows ) );
+				}
+			}
+		}
+
+		for ( var i = 0; i < cols ; i ++ ) {
+			for ( var j = 0; j < 2 * ( cols - i ) - 1; j ++ ) {
+				var k = Math.floor( j / 2 );
+				if ( j % 2 === 0 ) {
+					make(
+						v[ i ][ k + 1 ],
+						v[ i + 1 ][ k ],
+						v[ i ][ k ]
+					);
+				} else {
+					make(
+						v[ i ][ k + 1 ],
+						v[ i + 1 ][ k + 1 ],
+						v[ i + 1 ][ k ]
+					);
+				}
+			}
+		}
+	}
+}
+Icosahedron.prototype.updateRotate = function(){
+    var m = this.euler.updateMatrix();
+    for(var i=0, l=this._vertices.length; i<l; i++){
+        var v = this._vertices[i].clone(),
+            x = v.x,
+            y = v.y,
+            z = v.z;
+        v.x = m[0] * x + m[1] * y + m[2] * z;
+        v.y = m[4] * x + m[5] * y + m[6] * z;
+        v.z = m[8] * x + m[9] * y + m[10] * z;
+        this.vertices[i] = v;
+    };
+};
+Icosahedron.prototype.updateFaces = function(){
+    var order = ['a','b','c'];
+    for(var i=0, l=this.faces.length; i<l; i++){
+        var face = this.faces[i],c=0;
+        for(var j=0, k=order.length; j<k; j++){
+            var f = this.vertices[face[order[j]]],
+                s = this.vertices[face[order[(j+1)%k]]];
+            c += f.x * s.y - f.y * s.x;
+        }
+        face.culled = c > 0 ? false : true;
+    };
+};
+
+var icosa = new Icosahedron( 80, 1 );
+icosa.euler.x = 0;
+// icosa.euler.y = 45;
+icosa.euler.z = -15;
+icosa.updateRotate();
+icosa.updateFaces();
+
+var canvas = document.getElementById('stage');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var ctx = canvas.getContext('2d');
+ctx.transform(1,0,0,1,canvas.width>>1,canvas.height>>1);
+for(var i = 0; i < icosa.faces.length; i++){
+    var face = icosa.faces[i];
+    if (face.culled) continue;
+    var p1 = icosa.vertices[face.a];
+    var p2 = icosa.vertices[face.b];
+    var p3 = icosa.vertices[face.c];
+    var c = p1.clone().add(p2).add(p3).divideScalar(3);
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y);
+    ctx.closePath();
+    ctx.fillStyle = 'hsl(32, 77%, '+ (50+Math.random()*20) +'%)';
+    ctx.fill();
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(i,c.x,c.y);
+}
+</script>
+</body>
+</html>
