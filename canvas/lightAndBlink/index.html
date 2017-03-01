@@ -1,0 +1,308 @@
+<html>
+<head>
+    <title>wgld.org WebGL sample 014</title>
+    <script type="text/javascript">
+    (function() {
+        var UI = {
+            VOH: 'width',
+            DsgSize: 640,
+            root: document.getElementsByTagName('html')[0],
+            needPut: false,
+            ucHole: 1,
+            resolution: Math.min(2,window.devicePixelRatio),
+            rem: 100,
+            monitoring: false,
+            isUC: /uc/i.test(window.navigator.userAgent)
+        };
+
+        UI.init = function(opts) {
+            opts = opts || {};
+            this.VOH = opts.VOH || 'width';
+            this.DsgSize = opts.DsgSize || 640;
+            this.rem = opts.rem || 100;
+            this.resolution = opts.resolution || this.resolution;
+            this.meta = this.meta || document.querySelector('meta[name="viewport"]');
+            this._putMeta();
+        };
+        UI._putMeta = function() {
+            if (!this.meta) {
+                this.meta = document.createElement('meta');
+                this.meta.setAttribute('name', 'viewport');
+                this.needPut = true;
+            }
+            var ratio = 1/this.resolution;
+            this.meta.setAttribute('content', 'width=device-width,initial-scale='+ratio+', maximum-scale='+ratio+', minimum-scale='+ratio+', user-scalable=no');
+            if (this.needPut) {
+                this.root.firstElementChild.appendChild(this.meta);
+                this.needPut = false;
+            }
+            this.suit();
+            this._ears();
+        };
+        UI._ears = function() {
+            if (this.monitoring) return;
+            var This = this;
+            window.addEventListener('resize', function() {
+                This.suit();
+            }, false);
+            document.addEventListener("DOMContentLoaded", function() {
+                This.isUC && This._fillHole();
+            });
+            setTimeout(function() {
+                This.suit();
+            }, 100);
+            this.monitoring = true;
+        };
+        UI._fillHole = function() {
+            var dom = document.createElement('div'),
+                sPX = 100,
+                tPX = 100;
+            dom.style.fontSize = sPX + "px";
+            document.body.appendChild(dom);
+            tPX = parseInt(window.getComputedStyle(dom, null).fontSize) || tPX;
+
+            this.ucHole = sPX / tPX;
+
+            this.suit();
+
+            setTimeout(function() {
+                document.body.removeChild(dom);
+            }, 100);
+        };
+        UI.suit = function() {
+            var nowSize = this.VOH === 'width' ? document.documentElement.offsetWidth : document.documentElement.offsetWidth;
+            this.sPPR = this.rem * nowSize / this.DsgSize;
+            this.curPPR = this.ucHole * this.sPPR;
+            this.root.style.fontSize = this.curPPR + 'px';
+        };
+        UI.RTP = function(rem, bool) {
+            return (bool ? rem * this.curPPR : rem * this.sPPR) >> 0;
+        };
+        UI.PTR = function(px) {
+            return px / this.curPPR;
+        };
+
+        window.JC = window.JC || {};
+        window.JC.UI = UI;
+    })();
+    window.JC.UI.init();
+    </script>
+    <style type="text/css">
+    html,
+    body,
+    div,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    img,
+    b,
+    i,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border: 0;
+        outline: 0;
+    }
+    
+    article,
+    section {
+        display: block;
+    }
+    
+    html {
+        font-size: 50px;
+        height: 100%;
+    }
+    
+    body {
+        font-family: 'Arial';
+        font-size: .24rem;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(right top, circle, #fffbf1 0%, #fff3d7 35%, #ffd18b 60%, #ff9834 100%);
+        background: -webkit-radial-gradient(right top, circle, #fffbf1 0%, #fff3d7 35%, #ffd18b 60%, #ff9834 100%);
+        -webkit-user-select: none;
+        -webkit-text-size-adjust: none;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+    #canvas {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 8.8rem;
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="640" height="880"></canvas>
+    <script type="text/javascript" src="//jasonchen1982.github.io/jcc2d/build/jcc2d.js"></script>
+    <script type="text/javascript">
+        var stage = new JC.Stage('canvas'),
+            w = stage.width,
+            h = stage.height,
+            DOC = new JC.Container(),
+            graphics = new JC.Graphics(),
+            blink1 = new JC.Graphics(),
+            blink2 = new JC.Graphics();
+        DOC.x = 300;
+        DOC.y = 420;
+        var loadBox = JC.loaderUtil({
+                'talk': './images/talk.png'
+            }); 
+        var talker = new JC.Sprite({
+                texture: loadBox.getById('talk')
+            });
+            talker.y = 80;
+            talker.fromTo({
+                from: {y: 60, skewX: 0},
+                to: {y:80, skewX: -1},
+                duration: 1800,
+                infinity: true,
+                alternate: true,
+            });
+        function LightRay(rotation){
+            this.shader = null;
+            this.radius = JC.UTILS.random(280,440);
+            this.radian = JC.UTILS.random(4 * JC.UTILS.DTR,28 * JC.UTILS.DTR);
+            this.rotation = rotation * JC.UTILS.DTR;
+            this.opacity = JC.UTILS.random(0.8,1);
+        }
+        LightRay.prototype.render = function(ctx){
+            if(this.shader === null) this.initShader(ctx);
+            ctx.fillStyle = this.shader;
+            ctx.rotate(this.rotation);
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.arc(0,0,this.radius,0,this.radian);
+            ctx.fill();
+        };
+        LightRay.prototype.initShader = function(ctx){
+            this.shader = ctx.createRadialGradient(0,0,0,0,0,this.radius);
+            this.shader.addColorStop(0, 'rgba(255,255,255,'+ (.9 * this.opacity) +')');
+            this.shader.addColorStop(0.5, 'rgba(255,255,255,'+ (0.4 * this.opacity) +')');
+            this.shader.addColorStop(1, 'rgba(255,255,255,0)');
+        };
+        function LightRayGroup(){
+            this.config = [
+                [],
+            ];
+            this.children = [];
+            this.init();
+        }
+        LightRayGroup.prototype.init = function(){
+            for(var i=0;i<16;i++){
+                var deg = i <= 10 ? (i%10)/10 * 360 + JC.UTILS.random(-6,6) : JC.UTILS.random(0,360);
+                this.children.push(new LightRay(deg));
+            }
+        };
+        LightRayGroup.prototype.render = function(ctx){
+            this.children.forEach(function(cd){
+                ctx.save();
+                cd.render(ctx);
+                ctx.restore();
+            });
+        };
+
+
+        function DotCube(){
+            this.scale = JC.UTILS.random(0.4,1);
+            this.size = 20 * this.scale;
+            this.ssize = 12 * this.scale;
+            this.rotate = 45 * JC.UTILS.DTR;
+		    // this.theta = JC.UTILS.random( Math.PI*2 );
+		    // this.theta += JC.UTILS.random( -0.5, 0.5 );
+            this.init();
+        }
+        DotCube.prototype.init = function(){
+		    this.theta = JC.UTILS.random( Math.PI*2 );
+            this.x = JC.UTILS.random( -200, 200 );
+            this.y = JC.UTILS.random( -200, 200 );
+            this.vx = 0;
+            this.vy = 0;
+            this.life = JC.UTILS.random( 4000, 7000 );
+            this.st = Date.now();
+            this.opacity = 0;
+        };
+        DotCube.prototype.update = function(){
+            var nt = Date.now() - this.st;
+            var ll = this.life - nt;
+            // console.log(ll);
+		    this.theta += JC.UTILS.random( -1, 1 );
+            this.vx += Math.sin( this.theta ) * 0.05;
+            this.vy += Math.cos( this.theta ) * 0.05;
+
+            this.x += this.vx;
+            this.y += this.vy;
+            if (nt < 400) {
+                this.opacity = JC.UTILS.clamp(nt/400, 0, 1);
+            }
+            if (ll < 400) {
+                this.opacity = JC.UTILS.clamp(ll/400, 0, 1);
+            }
+            if (this.x < -320 || this.x > 320 || this.y < -420 || this.x > 460) {
+                this.init();
+            };
+        };
+        DotCube.prototype.render = function(ctx){
+            // console.log(this.x, this.y);
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotate);
+            ctx.scale(this.opacity,this.opacity);
+            ctx.fillStyle = 'rgba(255,255,255,'+ (0.5*this.opacity) +')';
+            ctx.fillRect(-this.size/2,-this.size/2,this.size,this.size);
+            ctx.fillStyle = 'rgba(255,255,255,'+ (1*this.opacity) +')';
+            ctx.fillRect(-this.ssize/2,-this.ssize/2,this.ssize,this.ssize);
+        };
+        
+        function DotCubeGroup(){
+            this.children = [];
+            this.init();
+        }
+        DotCubeGroup.prototype.init = function(){
+            for(var i=0;i<10;i++){
+                this.children.push(new DotCube());
+            }
+        };
+        DotCubeGroup.prototype.render = function(ctx){
+            this.children.forEach(function(cd){
+                ctx.save();
+                cd.update();
+                cd.render(ctx);
+                ctx.restore();
+            });
+        };
+        blink2.drawCall(new DotCubeGroup());
+        blink1.drawCall(new DotCubeGroup());
+
+        graphics.drawCall(new LightRayGroup());
+        stage.adds(DOC);
+        // talker.visible = false;
+        DOC.adds(graphics, blink1, talker, blink2);
+
+        // 定义渲染循环
+        function renderLoop(){
+            stage.render();
+            RAF(renderLoop);
+        }
+        renderLoop();
+        
+        
+    </script>
+</body>
+</html>
+
