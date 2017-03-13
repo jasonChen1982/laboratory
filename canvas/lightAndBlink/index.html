@@ -152,7 +152,9 @@
     <canvas id="canvas" width="640" height="880"></canvas>
     <script type="text/javascript" src="//jasonchen1982.github.io/jcc2d/build/jcc2d.js"></script>
     <script type="text/javascript">
-        var stage = new JC.Stage('canvas'),
+        var stage = new JC.Stage({
+            dom: 'canvas'
+        }),
             w = stage.width,
             h = stage.height,
             DOC = new JC.Container(),
