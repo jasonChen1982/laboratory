@@ -20,11 +20,11 @@ some demo or experiment function
  * [line torus](https://jasonchen1982.github.io/labratory/canvas/lineTorus/)
  * [line to](https://jasonchen1982.github.io/labratory/canvas/linto/)
  * [life particles](https://jasonchen1982.github.io/labratory/canvas/liveParticles/)
- * [loading](https://jasonchen1982.github.io/labratory/canvas/loading/)
+ * [loading](https://jasonchen1982.github.io/labratory/canvas/loading/lineLight/)
  * [low polygon](https://jasonchen1982.github.io/labratory/canvas/lowpolygon/)
  * [particle](https://jasonchen1982.github.io/labratory/canvas/particle/)
  * [pentagram](https://jasonchen1982.github.io/labratory/canvas/pentagram/)
- * [simple perlin noise](https://jasonchen1982.github.io/labratory/canvas/simpleNoise/)
+ * [simple perlin noise](https://jasonchen1982.github.io/labratory/canvas/simplexNoise/)
  * [sphere](https://jasonchen1982.github.io/labratory/canvas/sphere/)
  * [traingle](https://jasonchen1982.github.io/labratory/canvas/traingle/)
 </details>
