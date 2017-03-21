@@ -56,6 +56,7 @@
     function gotStream(stream) {
         window.stream = stream; // make stream available to console
         video.srcObject = stream;
+        return navigator.mediaDevices.enumerateDevices();
     }
     function start() {
         if (window.stream) {
@@ -63,7 +64,7 @@
             track.stop();
             });
         }
-        navigator.mediaDevices.getUserMedia(constraints).then(gotStream).catch(handleError);
+        navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).catch(handleError);
     }
 
     function handleError(error) {
