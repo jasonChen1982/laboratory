@@ -45,7 +45,7 @@
             // option.value = deviceInfo.deviceId;
             if (deviceInfo.kind === 'videoinput') {
                 console.log(deviceInfo.label);
-                if (deviceInfo.deviceId.indexOf('back' > -1)) {
+                if (deviceInfo.label.indexOf('back' > -1)) {
                     constraints.video = { exact: deviceInfo.deviceId };
                 }
             }
@@ -58,6 +58,11 @@
         video.srcObject = stream;
     }
     function start() {
+        if (window.stream) {
+            window.stream.getTracks().forEach(function(track) {
+            track.stop();
+            });
+        }
         navigator.mediaDevices.getUserMedia(constraints).then(gotStream).catch(handleError);
     }
 
