@@ -25,61 +25,29 @@
 <script type="text/javascript" src="./js/compatibility.js"></script>
 <script type="text/javascript" src="./js/jsfeat-min.js"></script>
 <script type="text/javascript" src="./js/profiler.js"></script>
+<script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 <script type="text/javascript">
     var video = document.getElementById('webcam');
     var canvas = document.getElementById('webar');
+    navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 
-    try {
-        var attempts = 0;
-        var readyListener = function(event) {
-            findVideoSize();
-        };
-        var findVideoSize = function() {
-            if(video.videoWidth > 0 && video.videoHeight > 0) {
-                video.removeEventListener('loadeddata', readyListener);
-                onDimensionsReady(video.videoWidth, video.videoHeight);
+    function gotDevices(deviceInfos) {
+        console.log(deviceInfos);
+        for (var i = 0; i !== deviceInfos.length; ++i) {
+            var deviceInfo = deviceInfos[i];
+            // var option = document.createElement('option');
+            // option.value = deviceInfo.deviceId;
+            if (deviceInfo.kind === 'videoinput') {
+                option.text = deviceInfo.label || 'camera ' + (videoSelect.length + 1);
+                videoSelect.appendChild(option);
             } else {
-                if(attempts < 10) {
-                    attempts++;
-                    setTimeout(findVideoSize, 200);
-                } else {
-                    onDimensionsReady(640, 480);
-                }
+                console.log('Some other kind of source/device: ', deviceInfo);
             }
-        };
-        var onDimensionsReady = function(width, height) {
-            demo_app(width, height);
-            compatibility.requestAnimationFrame(tick);
-        };
+        }
+    }
 
-        video.addEventListener('loadeddata', readyListener);
-        navigator.mediaDevices.getUserMedia({video: { facingMode: 'environment' }}).then(function(stream) {
-            var video = document.querySelector('video');
-            // Older browsers may not have srcObject
-            if ("srcObject" in video) {
-                video.srcObject = stream;
-            } else {
-                // Avoid using this in new browsers, as it is going away.
-                video.src = compatibility.URL.createObjectURL(stream);
-            }
-            video.onloadedmetadata = function(e) {
-                video.play();
-            };
-        });
-        // , function(stream) {
-        //     try {
-        //         video.src = compatibility.URL.createObjectURL(stream);
-        //     } catch (error) {
-        //         video.src = stream;
-        //     }
-        //     setTimeout(function() {
-        //         video.play();
-        //     }, 500);
-        // }, function (error) {
-        //     alert(error);
-        // });
-    } catch (error) {
-        alert(error);
+    function handleError(error) {
+        console.log('navigator.getUserMedia error: ', error);
     }
 </script>
 </body>
