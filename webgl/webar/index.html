@@ -26,9 +26,15 @@
 <script type="text/javascript" src="./js/jsfeat-min.js"></script>
 <script type="text/javascript" src="./js/profiler.js"></script>
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/2.5.1/vconsole.min.js"></script>
 <script type="text/javascript">
     var video = document.getElementById('webcam');
     var canvas = document.getElementById('webar');
+    var constraints = {
+        video: undefined,
+    };
+
+
     navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 
     function gotDevices(deviceInfos) {
@@ -39,9 +45,20 @@
             // option.value = deviceInfo.deviceId;
             if (deviceInfo.kind === 'videoinput') {
                 console.log(deviceInfo.label);
+                if (deviceInfo.deviceId.indexOf('back' > -1)) {
+                    constraints.video = { exact: deviceInfo.deviceId };
+                }
             }
             console.log('Some other kind of source/device: ', deviceInfo);
         }
+        start();
+    }
+    function gotStream(stream) {
+        window.stream = stream; // make stream available to console
+        video.srcObject = stream;
+    }
+    function start() {
+        navigator.mediaDevices.getUserMedia(constraints).then(gotStream).catch(handleError);
     }
 
     function handleError(error) {
