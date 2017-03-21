@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+<title>JC_demo</title>
+<style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        position: relative;
+        overflow: hidden;
+        background-color: #fff;
+    }
+</style>
+</head>
+
+<body>
+<video id="webcam"></video>
+<canvas id="webar"></canvas>
+<script type="text/javascript" src="./js/compatibility.js"></script>
+<script type="text/javascript" src="./js/jsfeat-min.js"></script>
+<script type="text/javascript" src="./js/profiler.js"></script>
+<script type="text/javascript">
+    var video = document.getElementById('webcam');
+    var canvas = document.getElementById('webar');
+
+    compatibility.getUserMedia({video: true}, function(stream) {
+        try {
+            video.src = compatibility.URL.createObjectURL(stream);
+        } catch (error) {
+            video.src = stream;
+        }
+        setTimeout(function() {
+            video.play();
+        }, 500);
+    }, function (error) {
+        alert(error);
+    });
+</script>
+</body>
+</html>
