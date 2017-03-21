@@ -53,7 +53,7 @@
         };
 
         video.addEventListener('loadeddata', readyListener);
-        compatibility.getUserMedia({video: { facingMode: 'environment' }}, function(stream) {
+        compatibility.getUserMedia({video: { facingMode: { exact: "environment" } }}, function(stream) {
             try {
                 video.src = compatibility.URL.createObjectURL(stream);
             } catch (error) {
