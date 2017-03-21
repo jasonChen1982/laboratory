@@ -53,18 +53,31 @@
         };
 
         video.addEventListener('loadeddata', readyListener);
-        navigator.mediaDevices.getUserMedia({video: { facingMode: { exact: "environment" } }}, function(stream) {
-            try {
+        navigator.mediaDevices.getUserMedia({video: { facingMode: { exact: "environment" } }}).then(function(stream) {
+            var video = document.querySelector('video');
+            // Older browsers may not have srcObject
+            if ("srcObject" in video) {
+                video.srcObject = stream;
+            } else {
+                // Avoid using this in new browsers, as it is going away.
                 video.src = compatibility.URL.createObjectURL(stream);
-            } catch (error) {
-                video.src = stream;
             }
-            setTimeout(function() {
+            video.onloadedmetadata = function(e) {
                 video.play();
-            }, 500);
-        }, function (error) {
-            alert(error);
+            };
         });
+        // , function(stream) {
+        //     try {
+        //         video.src = compatibility.URL.createObjectURL(stream);
+        //     } catch (error) {
+        //         video.src = stream;
+        //     }
+        //     setTimeout(function() {
+        //         video.play();
+        //     }, 500);
+        // }, function (error) {
+        //     alert(error);
+        // });
     } catch (error) {
         alert(error);
     }
