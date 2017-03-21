@@ -38,11 +38,9 @@
             // var option = document.createElement('option');
             // option.value = deviceInfo.deviceId;
             if (deviceInfo.kind === 'videoinput') {
-                option.text = deviceInfo.label || 'camera ' + (videoSelect.length + 1);
-                videoSelect.appendChild(option);
-            } else {
-                console.log('Some other kind of source/device: ', deviceInfo);
+                console.log(deviceInfo.label);
             }
+            console.log('Some other kind of source/device: ', deviceInfo);
         }
     }
 
