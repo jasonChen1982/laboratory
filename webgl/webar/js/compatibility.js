@@ -38,7 +38,7 @@ var compatibility = (function() {
 
         // Older browsers might not implement mediaDevices at all, so we set an empty object first
         if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
+            navigator.mediaDevices = {};
         }
 
         // Some browsers partially implement mediaDevices. We can't just assign an object
@@ -79,7 +79,7 @@ var compatibility = (function() {
         URL: URL,
         requestAnimationFrame: requestAnimationFrame,
         cancelAnimationFrame: cancelAnimationFrame,
-        getUserMedia: navigator.mediaDevices.getUserMedia,
+        // getUserMedia: navigator.mediaDevices.getUserMedia,
         detectEndian: detectEndian,
         isLittleEndian: isLittleEndian
     };
