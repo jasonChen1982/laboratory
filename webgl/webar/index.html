@@ -50,7 +50,7 @@
             // option.value = deviceInfo.deviceId;
             if (deviceInfo.kind === 'videoinput') {
                 console.log(deviceInfo.label);
-                if (deviceInfo.label.indexOf('back' > -1)) {
+                if (deviceInfo.label.indexOf('back') > -1) {
                     constraints.video = { exact: deviceInfo.deviceId };
                 }
             }
