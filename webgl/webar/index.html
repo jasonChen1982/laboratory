@@ -53,7 +53,7 @@
         };
 
         video.addEventListener('loadeddata', readyListener);
-        navigator.mediaDevices.getUserMedia({video: { facingMode: { exact: "environment" } }}).then(function(stream) {
+        navigator.mediaDevices.getUserMedia({video: { facingMode: 'environment' }}).then(function(stream) {
             var video = document.querySelector('video');
             // Older browsers may not have srcObject
             if ("srcObject" in video) {
