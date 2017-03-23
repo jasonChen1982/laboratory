@@ -59,9 +59,8 @@
         start();
     }
     function gotStream(stream) {
-        window.stream = stream; // make stream available to console
+        window.stream = stream;
         video.srcObject = stream;
-        // return navigator.mediaDevices.enumerateDevices();
     }
     function start() {
         if (window.stream) {
