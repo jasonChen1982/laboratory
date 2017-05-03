@@ -238,8 +238,8 @@
 
 			var time = Date.now() * 0.002;
 
-			// uniforms.amplitude.value = 0.2 * Math.sin( time * 0.2 );
-            // mesh.rotation.y = time * 0.02 % (Math.PI * 2);
+			uniforms.amplitude.value = 1 * Math.sin( time * 0.2 );
+            mesh.rotation.y = time * 0.04 % (Math.PI * 2);
 			renderer.render( scene, camera );
 
 		}
