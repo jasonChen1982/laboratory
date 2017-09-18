@@ -114,12 +114,12 @@
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      ctx.moveTo(0, 0);
-      ctx.lineTo(points[1].x * scale, points[1].y * -scale);
-      ctx.moveTo(scale, -scale);
-      ctx.lineTo(points[2].x * scale, points[2].y * -scale);
-      ctx.lineWidth = 1;
-      ctx.stroke();
+    //   ctx.moveTo(0, 0);
+    //   ctx.lineTo(points[1].x * scale, points[1].y * -scale);
+    //   ctx.moveTo(scale, -scale);
+    //   ctx.lineTo(points[2].x * scale, points[2].y * -scale);
+    //   ctx.lineWidth = 1;
+    //   ctx.stroke();
     };
 
     function bindDrag(el, point) {
@@ -212,17 +212,17 @@
       scale: 400,
     }));
 
-    for (var i = 1; i <= 2; i++) {
-      var color = i === 1 ? '#ff7593' : '#bd59ff';
-      var control = new JC.Graphics(new Circle(color, 15));
-      var point = bezierPath.points[i];
-      control.x = point.x * 400;
-      control.y = point.y * -400;
-      control.setArea(new JC.Circle(0, 0, 15));
-      solidLine.adds(control);
+    // for (var i = 1; i <= 2; i++) {
+    //   var color = i === 1 ? '#ff7593' : '#bd59ff';
+    //   var control = new JC.Graphics(new Circle(color, 15));
+    //   var point = bezierPath.points[i];
+    //   control.x = point.x * 400;
+    //   control.y = point.y * -400;
+    //   control.setArea(new JC.Circle(0, 0, 15));
+    //   solidLine.adds(control);
 
-      bindDrag(control, point);
-    }
+    //   bindDrag(control, point);
+    // }
 
     var box = new JC.Graphics(new Coordinate({
       gridColor: '#979ac4',
