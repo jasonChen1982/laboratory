@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <title>JC_demo</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    #demo_canvas {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 320px;
+      height: 540px;
+      margin: -270px 0 0 -160px;
+    }
+    .output-bezier {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      margin: 0 0 -140px -95px;
+      width: 250px;
+      height: 30px;
+      border-radius: 4px;
+      text-align: center;
+      line-height: 30px;
+      font-size: 12px;
+      color: #0ab;
+      font-weight: bold;
+    }
+    .red {
+      color: #ff7593;
+    }
+    .blue {
+      color: #bd59ff;
+    }
+
+  </style>
+</head>
+
+<body>
+  <canvas id="demo_canvas" width="640" height="1080"></canvas>
+  <script type="text/javascript" src="https://jasonchen1982.github.io/jcc2d/build/jcc2d.js"></script>
+  <script type="text/javascript" src="https://jasonchen1982.github.io/jcc2d/examples/libs/derivedClass/coordinate.js"></script>
+  <script type="text/javascript">
+    function Rect(color) {
+      this.color = color || '#c243ff';
+    }
+    Rect.prototype.render = function (ctx) {
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.fillRect(-30, -30, 60, 60);
+      ctx.fill();
+    };
+
+    function Circle(color, radius) {
+      this.radius = radius || 60;
+      this.color = color || '#eca378';
+    }
+    Circle.prototype.render = function (ctx) {
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#2feef5';
+      ctx.fill();
+      ctx.stroke();
+    };
+
+    function CurveGraph(options) {
+      options = options || {};
+      this.gradStart = options.gradStart;
+      this.gradEnd = options.gradEnd;
+      this.path = options.path;
+      this.scale = options.scale;
+      this.segment = options.segment || 100;
+    }
+    CurveGraph.prototype.initGrad = function(ctx) {
+      this.gradient = ctx.createLinearGradient(
+        this.gradStart.x,
+        this.gradStart.y,
+        this.gradEnd.x,
+        this.gradEnd.y
+      );
+      this.gradient.addColorStop(0, this.gradStart.color);
+      this.gradient.addColorStop(1, this.gradEnd.color);
+    };
+    CurveGraph.prototype.render = function(ctx) {
+      if (!this.gradient) this.initGrad(ctx);
+
+      var scale = this.scale;
+      var points = this.path.points;
+      ctx.beginPath();
+      ctx.strokeStyle = this.gradient;
+      for (var i = 0; i <= this.segment; i++) {
+        var t = i / 100;
+        var pos = this.path.getPoint(t);
+        if (i === 0) {
+          ctx.moveTo(t * scale, pos.x * -scale);
+        } else {
+          ctx.lineTo(t * scale, pos.x * -scale);
+        }
+      }
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.moveTo(0, 0);
+      ctx.lineTo(points[1].x * scale, points[1].y * -scale);
+      ctx.moveTo(scale, -scale);
+      ctx.lineTo(points[2].x * scale, points[2].y * -scale);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    };
+
+    function bindDrag(el, point) {
+      var data = {};
+      el.on('touchstart', function (ev) {
+        data.start = {};
+        data.start.x = ev.global.x;
+        data.start.y = ev.global.y;
+        el.preX = el.x;
+        el.preY = el.y;
+      });
+      el.on('touchmove', function (ev) {
+        data.translate = {};
+        data.translate.x = ev.global.x - data.start.x;
+        data.translate.y = ev.global.y - data.start.y;
+
+        el.x = JC.Utils.clamp(el.preX + data.translate.x, 0, 400);
+        el.y = el.preY + data.translate.y;
+
+        point.x = el.x / 400;
+        point.y = -el.y / 400;
+      });
+      el.on('touchend', function () {
+        el.preX = el.x;
+        el.preY = el.y;
+      });
+
+      var enable = false;
+      el.on('mousedown', function (ev) {
+        if (enable) return;
+        enable = true;
+        data.start = {};
+        data.start.x = ev.global.x;
+        data.start.y = ev.global.y;
+        el.preX = el.x;
+        el.preY = el.y;
+      });
+      stage.on('mousemove', function (ev) {
+        if (!enable) return;
+        data.translate = {};
+        data.translate.x = ev.global.x - data.start.x;
+        data.translate.y = ev.global.y - data.start.y;
+
+        el.x = JC.Utils.clamp(el.preX + data.translate.x, 0, 400);
+        el.y = el.preY + data.translate.y;
+
+        point.x = el.x / 400;
+        point.y = -el.y / 400;
+      });
+      stage.on('mouseup', function (ev) {
+        if (!enable) return;
+        enable = false;
+        el.preX = el.x;
+        el.preY = el.y;
+      });
+    }
+
+    function fixedDecimal(num, digit) {
+      digit = digit || 0;
+      var scale = Math.pow(10, digit);
+      return Math.round(num * scale) / scale;
+    }
+
+    function updateEase() {
+      var x1 = fixedDecimal(bezierPath.points[1].x, 3);
+      var y1 = fixedDecimal(bezierPath.points[1].y, 3);
+      var x2 = fixedDecimal(bezierPath.points[2].x, 3);
+      var y2 = fixedDecimal(bezierPath.points[2].y, 3);
+      output.innerHTML = 'cubic-bezier(<span class="red">'+ x1 +'</span>, <span class="red">'+ y1 +'</span>, <span class="blue">'+ x2 +'</span>, <span class="blue">'+ y2 +'</span>)';
+      shapeEase.ease = JC.Tween.Ease.Bezier(x1, y1, x2, y2);
+    }
+
+    var controls = [
+      new JC.Point(0, 0),
+      new JC.Point(0.19,1.61),
+      new JC.Point(0.48,0.88),
+      new JC.Point(1, 1),
+    ];
+    var bezierPath = new JC.BezierCurve(controls);
+    var descartesSys = new JC.Container();
+    var stage = new JC.Stage({
+      dom: 'demo_canvas',
+    })
+    var output = document.querySelector('#output-bezier');
+
+    var solidLine = new JC.Graphics(new CurveGraph({
+      gradStart: { x: 0, y: 0, color: '#ff7593'},
+      gradEnd: { x: 400, y: -400, color: '#bd59ff'},
+      path: bezierPath,
+      scale: 400,
+    }));
+
+    for (var i = 1; i <= 2; i++) {
+      var color = i === 1 ? '#ff7593' : '#bd59ff';
+      var control = new JC.Graphics(new Circle(color, 15));
+      var point = bezierPath.points[i];
+      control.x = point.x * 400;
+      control.y = point.y * -400;
+      control.setArea(new JC.Circle(0, 0, 15));
+      solidLine.adds(control);
+
+      bindDrag(control, point);
+    }
+
+    var box = new JC.Graphics(new Coordinate({
+      gridColor: '#979ac4',
+      axisColor: '#7d81bb',
+    }));
+    descartesSys.x = 180;
+    descartesSys.y = 700;
+    descartesSys.adds(box, solidLine);
+
+    stage.adds(descartesSys);
+    stage.startEngine();
+
+
+  </script>
+</body>
+
+</html>
