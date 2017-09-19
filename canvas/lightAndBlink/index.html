@@ -157,10 +157,7 @@
         }),
             w = stage.width,
             h = stage.height,
-            DOC = new JC.Container(),
-            graphics = new JC.Graphics(),
-            blink1 = new JC.Graphics(),
-            blink2 = new JC.Graphics();
+            DOC = new JC.Container();
         DOC.x = 300;
         DOC.y = 420;
         var loadBox = JC.loaderUtil({
@@ -169,20 +166,22 @@
         var talker = new JC.Sprite({
                 texture: loadBox.getById('talk')
             });
+            talker.pivotX = -162;
+            talker.pivotY = -323;
             talker.y = 80;
-            talker.fromTo({
+            talker.animate({
                 from: {y: 60, skewX: 0},
                 to: {y:80, skewX: -1},
                 duration: 1800,
-                infinity: true,
+                infinite: true,
                 alternate: true,
             });
         function LightRay(rotation){
             this.shader = null;
-            this.radius = JC.UTILS.random(280,440);
-            this.radian = JC.UTILS.random(4 * JC.UTILS.DTR,28 * JC.UTILS.DTR);
-            this.rotation = rotation * JC.UTILS.DTR;
-            this.opacity = JC.UTILS.random(0.8,1);
+            this.radius = JC.Utils.random(280,440);
+            this.radian = JC.Utils.random(4 * JC.Utils.DTR,28 * JC.Utils.DTR);
+            this.rotation = rotation * JC.Utils.DTR;
+            this.opacity = JC.Utils.random(0.8,1);
         }
         LightRay.prototype.render = function(ctx){
             if(this.shader === null) this.initShader(ctx);
@@ -208,7 +207,7 @@
         }
         LightRayGroup.prototype.init = function(){
             for(var i=0;i<16;i++){
-                var deg = i <= 10 ? (i%10)/10 * 360 + JC.UTILS.random(-6,6) : JC.UTILS.random(0,360);
+                var deg = i <= 10 ? (i%10)/10 * 360 + JC.Utils.random(-6,6) : JC.Utils.random(0,360);
                 this.children.push(new LightRay(deg));
             }
         };
@@ -222,21 +221,21 @@
 
 
         function DotCube(){
-            this.scale = JC.UTILS.random(0.4,1);
+            this.scale = JC.Utils.random(0.4,1);
             this.size = 20 * this.scale;
             this.ssize = 12 * this.scale;
-            this.rotate = 45 * JC.UTILS.DTR;
-		    // this.theta = JC.UTILS.random( Math.PI*2 );
-		    // this.theta += JC.UTILS.random( -0.5, 0.5 );
+            this.rotate = 45 * JC.Utils.DTR;
+		    // this.theta = JC.Utils.random( Math.PI*2 );
+		    // this.theta += JC.Utils.random( -0.5, 0.5 );
             this.init();
         }
         DotCube.prototype.init = function(){
-		    this.theta = JC.UTILS.random( Math.PI*2 );
-            this.x = JC.UTILS.random( -200, 200 );
-            this.y = JC.UTILS.random( -200, 200 );
+		    this.theta = JC.Utils.random( Math.PI*2 );
+            this.x = JC.Utils.random( -200, 200 );
+            this.y = JC.Utils.random( -200, 200 );
             this.vx = 0;
             this.vy = 0;
-            this.life = JC.UTILS.random( 4000, 7000 );
+            this.life = JC.Utils.random( 4000, 7000 );
             this.st = Date.now();
             this.opacity = 0;
         };
@@ -244,17 +243,17 @@
             var nt = Date.now() - this.st;
             var ll = this.life - nt;
             // console.log(ll);
-		    this.theta += JC.UTILS.random( -1, 1 );
+		    this.theta += JC.Utils.random( -1, 1 );
             this.vx += Math.sin( this.theta ) * 0.05;
             this.vy += Math.cos( this.theta ) * 0.05;
 
             this.x += this.vx;
             this.y += this.vy;
             if (nt < 400) {
-                this.opacity = JC.UTILS.clamp(nt/400, 0, 1);
+                this.opacity = JC.Utils.clamp(nt/400, 0, 1);
             }
             if (ll < 400) {
-                this.opacity = JC.UTILS.clamp(ll/400, 0, 1);
+                this.opacity = JC.Utils.clamp(ll/400, 0, 1);
             }
             if (this.x < -320 || this.x > 320 || this.y < -420 || this.x > 460) {
                 this.init();
@@ -288,10 +287,10 @@
                 ctx.restore();
             });
         };
-        blink2.drawCall(new DotCubeGroup());
-        blink1.drawCall(new DotCubeGroup());
+        var graphics = new JC.Graphics(new LightRayGroup()),
+            blink1 = new JC.Graphics(new DotCubeGroup()),
+            blink2 = new JC.Graphics(new DotCubeGroup());
 
-        graphics.drawCall(new LightRayGroup());
         stage.adds(DOC);
         // talker.visible = false;
         DOC.adds(graphics, blink1, talker, blink2);
