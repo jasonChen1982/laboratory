@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <title>yellowjs performance</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    #demo_canvas {
+      width: 100%;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="demo_canvas"></div>
+
+  <script type="text/javascript" src="http://image.uc.cn/s/uae/g/01/yellowjs/yellowjs-v2.11.1.js"></script>
+  <script type="text/javascript" src="https://jasonchen1982.github.io/jcc2d/examples/libs/stats.min.js"></script>
+  <script type="text/javascript">
+    var w = window.innerWidth,
+      h = window.innerHeight,
+      stage = new yellowjs.Scene({
+            ele: '#demo_canvas',
+            width: w,
+            height: h,
+            quality: 1.5,
+        }),
+      DOC = new yellowjs.Container();
+    DOC.x = 150;
+    DOC.y = 150;
+    DOC.scale = 0.3;
+
+    for (var i = 0; i < 300; i++) {
+        var el = new yellowjs.Image({
+            src: './images/scrat.png', 
+            width: 200,
+            height: 347,
+            originX: 100,
+            originY: 170,
+        });
+        el.x = (Math.random() - 0.5) * 2 * w;
+        el.y = (Math.random() - 0.5) * 2 * h;
+        // var time = 2e3 + Math.random() * 1e3;
+        // el.loop([
+        //     {
+        //         rotation: 360,
+        //         time: time/2,
+        //         timeFunction: yellowjs.EASE,
+        //     },
+        //     {
+        //         rotation: 0,
+        //         time: time/2,
+        //         timeFunction: yellowjs.EASE,
+        //     }
+        // ], 0);
+
+        DOC.addChild(el);
+    }
+    stage.addChild(DOC);
+
+    stage.play();
+
+    /**
+     * 帧率监控工具
+     */
+    var stats = new Stats();
+    document.body.appendChild(stats.domElement);
+    stage.addTickEnd(function() {
+        stats.update();
+    })
+
+  </script>
+</body>
+
+</html>

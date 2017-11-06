@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <style>
+        * {
+            margin: 0;
+        }
+
+        p {
+            color: #333;
+        }
+        .btn-style {
+            width: 100px;
+            height: 30px;
+            margin: 20px auto;
+            line-height: 30px;
+            text-align: center;
+            background: red;
+        }
+        div {
+            height: 200px;
+            background: #ff0;
+        }
+    </style>
+    <script>
+        window.onerror = function(a,b,c) {
+            alert(a + b + c);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="aaa"></div>
+    <script src="./nosleep.js"></script>
+    <script>
+        window.K_UCKUIWebViewVideoFinder = 0;
+
+        var noSleep = new NoSleep();
+        const area = document.getElementById('aaa');
+        area.addEventListener('click', function(){
+            // area.innerHTML = 'ok';
+            noSleep.enable(); // keep the screen on!
+        });
+    
+    </script>
+</body>
+
+</html>

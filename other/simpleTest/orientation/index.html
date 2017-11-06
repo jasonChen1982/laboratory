@@ -23,7 +23,7 @@
         window.onerror = function(m){
             alert(m)
         }
-        window.addEventListener('deviceorientation', update);
+        window.addEventListener('deviceorientation', update, true);
         var alpha = document.getElementById('alpha');
         var beta = document.getElementById('beta');
         var gamma = document.getElementById('gamma');
