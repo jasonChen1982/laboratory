@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        * {
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+        p {
+            color: #333;
+        }
+        </style>
+    </head>
+    <body>
+    <script src="//res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script>
+    <script>
+        new VConsole();
+        var body = document.body;
+        body.addEventListener('touchstart', function(ev) {
+            console.log(ev);
+        });
+        body.addEventListener('touchmove', function(ev) {
+            console.log(ev);
+        });
+        body.addEventListener('touchend', function(ev) {
+            console.log(ev);
+        });
+    </script>
+    </body>
+</html>

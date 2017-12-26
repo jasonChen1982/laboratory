@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            background: -webkit-radial-gradient(center, circle cover, #43517b 0%, #060a1d 100%);
+        }
+
+        p {
+            color: #333;
+        }
+        #demo-canvas {
+            width: 100%;
+        }
+        .information {
+            position: absolute;
+            top: 0;
+            width: 150px;
+            background: #ccc;
+        }
+        .record {
+            position: fixed;
+            left: 50%;
+            bottom: 10%;
+            width: 60px;
+            height: 30px;
+            margin-left: -30px;
+            background: #ff7593;
+            border-radius: 6px;
+            text-align: center;
+            line-height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="demo-canvas" width="800" height="1000"></canvas>
+    <div class="information">
+        <p id="positionx"></p>
+        <p id="positiony"></p>
+        <p id="positionz"></p>
+        <p id="interval"></p>
+    </div>
+    <div class="record">录制</div>
+    <script src="//jasonchen1982.github.io/jcc2d/build/jcc2d.js"></script>
+    <script src="./js/coordinate.js"></script>
+    <script>
+        var record = document.querySelector('.record');
+        record.enable = true;
+        record.addEventListener('click', function() {
+            record.enable = !record.enable;
+            record.innerHTML = record.enable ? '录制' : '暂停';
+        })
+        function Wave(scale) {
+            this.scale = scale || 10;
+            this.color = '#ff7593';
+            this.data = [];
+            this.length = 200;
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.lx = 0;
+            this.ly = 0;
+            this.lz = 0;
+        }
+        Wave.prototype.add = function(data) {
+            if (!data) return;
+            if (this.data.length >= this.length) this.remove();
+            this.data.push(data);
+        };
+        Wave.prototype.remove = function() {
+            this.data.shift();
+            if (this.data.length >= this.length) this.remove();
+        };
+        Wave.prototype.render = function(ctx) {
+            var length = this.data.length;
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            for (var i = 0; i < length; i++) {
+                var acc = this.data[i];
+                var x = 3 * i;
+                var y = acc.z * this.scale;
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.strokeStyle = this.color;
+            ctx.stroke();
+        }
+
+        window.addEventListener('devicemotion', update);
+        var positionx = document.getElementById('positionx');
+        var positiony = document.getElementById('positiony');
+        var positionz = document.getElementById('positionz');
+        var interval = document.getElementById('interval');
+
+        var wave = new Wave();
+        var waveline = new Wave(20);
+        var imu = new IMU();
+
+        function update(ev) {
+            imu.update(ev);
+            if (record.enable) {
+                wave.add(new Vector3().copy(imu.acc));
+                waveline.add(new Vector3().copy(imu.position));
+            }
+
+            positionx.innerHTML = 'position.x: ' + imu.acc.x.toFixed(4);
+            positiony.innerHTML = 'position.y: ' + imu.acc.y.toFixed(4);
+            positionz.innerHTML = 'position.z: ' + imu.acc.z.toFixed(4);
+        }
+
+        var stage = new JC.Stage({
+            dom: 'demo-canvas'
+        });
+        var accDoc = new JC.Container();
+        accDoc.x = 50;
+        accDoc.y = 300;
+        var box = new JC.Graphics(new Coordinate({
+            grideOffset: { x: 0, y: 100 },
+            size: { x: 600, y: 200 },
+            segment: { x: 60, y: 20 },
+            gridColor: '#979ac4',
+            axisColor: '#7d81bb',
+        }), {
+            cache: true,
+            bounds: new JC.Bounds(-50, -150, 650, 150),
+        });
+        var waveLine = new JC.Graphics(wave);
+        accDoc.adds(box, waveLine);
+        stage.adds(accDoc);
+
+
+        var speedDoc = new JC.Container();
+        speedDoc.x = 50;
+        speedDoc.y = 700;
+        var speedBox = new JC.Graphics(new Coordinate({
+            grideOffset: { x: 0, y: 100 },
+            size: { x: 600, y: 200 },
+            segment: { x: 60, y: 20 },
+            gridColor: '#979ac4',
+            axisColor: '#7d81bb',
+        }), {
+            cache: true,
+            bounds: new JC.Bounds(-50, -150, 650, 150),
+        });
+        var waveLine = new JC.Graphics(waveline);
+        speedDoc.adds(speedBox, waveLine);
+        stage.adds(speedDoc);
+
+        stage.startEngine();
+
+        function Vector3(x, y, z) {
+            this.x = x || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+        }
+        Vector3.prototype.copy = function(vec3) {
+            this.x = vec3.x;
+            this.y = vec3.y;
+            this.z = vec3.z;
+            return this;
+        };
+
+        function Sleep3() {
+            this.x = false;
+            this.y = false;
+            this.z = false;
+        }
+
+        function IMU(options) {
+            options = options || {};
+            this.sleepTimes = options.sleepTimes || 30;
+            this.noise = options.noise || 0.2;
+            // this.conver = options.conver || 0.5;
+            this.interval = 0;
+
+            this.acc = new Vector3();
+            this.velocity = new Vector3();
+            this.position = new Vector3();
+
+            this.sleeps = new Vector3();
+            this.sleep = new Sleep3();
+
+            this.VEC = [ 'x', 'y', 'z' ];
+        }
+        IMU.prototype.update = function(ev) {
+            this.interval = ev.interval;
+
+            this.acc.copy(event.acceleration);
+
+            this.velocity.x += this.acc.x * this.interval;
+            this.velocity.y += this.acc.y * this.interval;
+            this.velocity.z += this.acc.z * this.interval;
+
+            this.checkSleeps();
+            this.convergence();
+
+            this.position.x += this.velocity.x * this.interval;
+            this.position.y += this.velocity.y * this.interval;
+            this.position.z += this.velocity.z * this.interval;
+        };
+        IMU.prototype.convergence = function() {
+            var This = this;
+            this.VEC.forEach(function(it) {
+                var scale = 0.5 + 0.5 * (1 - JC.Utils.clamp(This.sleeps[it] / This.sleepTimes, 0, 1));
+                This.velocity[it] *= scale;
+            })
+        };
+        IMU.prototype.checkSleeps = function() {
+            var This = this;
+            this.VEC.forEach(function(it) {
+                if (This.isSleep(This.acc[it], This.noise)) {
+                    This.sleeps[it]++;
+                } else {
+                    This.sleeps[it] = 0;
+                }
+            })
+        };
+        IMU.prototype.isSleep = function(value, noise) {
+            return Math.abs(value) < noise;
+        };
+
+    </script>
+</body>
+
+</html>

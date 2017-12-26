@@ -18,20 +18,25 @@
         <p id="alpha"></p>
         <p id="beta"></p>
         <p id="gamma"></p>
+        <p id="orientate"></p>
     </div>
     <script>
-        window.onerror = function(m){
-            alert(m)
-        }
-        window.addEventListener('deviceorientation', update, true);
+        window.addEventListener('deviceorientation', update);
         var alpha = document.getElementById('alpha');
         var beta = document.getElementById('beta');
         var gamma = document.getElementById('gamma');
-        function update(ev){
-            alpha.innerHTML = 'alpha: ' + (ev.alpha >> 0);
-            beta.innerHTML = 'beta: ' + (ev.beta >> 0);
-            gamma.innerHTML = 'gamma: ' + (ev.gamma >> 0);
+        var orientate = document.getElementById('orientate');
+        function update(ev) {
+            alpha.innerHTML = 'alpha: ' + (ev.alpha);
+            beta.innerHTML = 'beta: ' + (ev.beta);
+            gamma.innerHTML = 'gamma: ' + (ev.gamma);
         }
+
+        window.addEventListener('orientationchange', orientationchange);
+        function orientationchange() {
+            orientate.innerHTML = 'orientate: ' + (window.orientation || 0);
+        }
+        orientationchange();
     </script>
     </body>
 </html>

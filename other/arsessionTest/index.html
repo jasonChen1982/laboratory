@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <style>
+        * {
+            margin: 0;
+        }
+        p {
+            color: #333;
+        }
+        .btn-style {
+            width: 100px;
+            height: 30px;
+            margin: 20px auto;
+            line-height: 30px;
+            text-align: center;
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="//res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script>
+    <script>
+        new VConsole();
+
+        var arSession = null;
+
+
+        function getARSession() {
+            if (window.ARSession) {
+                return window.ARSession;
+            }
+            if (window.ucweb && window.ucweb.ARSession) {
+                return window.ucweb.ARSession;
+            }
+            return null;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('==== DOMContentLoaded ====');
+            var timer = setInterval(function() {
+                arSession = getARSession();
+                console.log('has AR:', arSession);
+                if (arSession) {
+                    clearInterval(timer);
+                    init();
+                }
+            }, 300);
+        });
+
+        function init() {
+            console.log('run in init');
+            arSession.addEventListener('DetectorInitResult', function(mat) {
+                console.log('DetectorInitResult:', mat);
+            });
+            arSession.addEventListener('DetectorResult', function(mat) {
+                console.log('DetectorResult:', mat);
+            });
+        }
+
+    
+    </script>
+</body>
+
+</html>

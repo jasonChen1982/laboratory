@@ -1,0 +1,23 @@
+{
+  "name": "labratory",
+  "version": "1.0.0",
+  "description": "some demo or experiment function",
+  "main": "index.js",
+  "scripts": {
+    "http": "hs -o",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasonChen1982/labratory.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasonChen1982/labratory/issues"
+  },
+  "homepage": "https://github.com/jasonChen1982/labratory#readme",
+  "devDependencies": {
+    "http-server": "^0.10.0"
+  }
+}
