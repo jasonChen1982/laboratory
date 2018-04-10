@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>DEMO VR</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        body {
+            position: relative;
+            background: #666;
+        }
+
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform-origin: top;
+            transition: 0.5s all ease-in-out;
+        }
+
+        .preview-box-in {
+            transform: translate(0, 90px) scale(0.8);
+        }
+
+        .preview-box-inin {
+            transform: translate(0, 80px) scale(0.64);
+        }
+
+        .btn-box {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 100px;
+            height: 40px;
+            margin-left: -50px;
+            background: rgb(77, 214, 162);
+            line-height: 40px;
+            z-index: 1;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <img id="screenshot" src="http://image.uc.cn/s/uae/g/01/jc/1.png" />
+
+
+    <div class="btn-box" id="aniBtn">做个动画</div>
+    <script>
+        
+        function euclideanModulo(n, m) {
+            return ((n % m) + m) % m;
+        }
+
+        var anis = ['', 'preview-box-in', 'preview-box-inin' ];
+        var index = 0;
+        var screenshot = document.getElementById('screenshot');
+        var aniBtn = document.getElementById('aniBtn');
+
+        aniBtn.addEventListener('click', function () {
+            index = euclideanModulo(++index, anis.length);
+            var className = anis[index];
+            screenshot.className = className;
+        });
+    </script>
+</body>
+
+</html>

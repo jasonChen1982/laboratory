@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>JC_demo</title>
+    <style type="text/css">
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    
+    body {
+        position: relative;
+        overflow: hidden;
+    }
+    </style>
+</head>
+
+<body>
+<canvas id="webgl"></canvas>
+<script type="text/javascript" src="../../js/three.js"></script>
+<script type="text/javascript" src="../../js/three.tofu.js"></script>
+<script type="text/javascript">
+    var camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+    var cubeCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+	camera.position.z = 1;
+
+	var scene = new THREE.Scene();
+	var cubeScene = new THREE.Scene();
+
+	var geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+	var material = new THREE.MeshBasicMaterial({
+        color: 0xff00ff,
+        // transparent: true,
+        // opacity: 0.5,
+        // depthTest: false,
+        // depthWrite: false,
+    });
+
+	var mesh = new THREE.Mesh( geometry, material );
+	scene.add( mesh );
+
+    var quad = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), new THREE.MeshBasicMaterial({
+        color: 0xffff00,
+        transparent: true,
+        opacity: 0.5,
+        // blending: THREE.CustomBlending,
+        // blendSrc: THREE.SrcColorFactor,
+        // depthWrite: false,
+        // depthTest: false,
+    }));
+    // quad.position.z = -1;
+    cubeScene.add(quad);
+
+	var renderer = new THREE.WebGLRenderer( { canvas: document.querySelector('#webgl'), antialias: true } );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.autoClear = false;
+
+    function animate() {
+        renderer.render(scene, camera);
+        renderer.render(cubeScene, cubeCamera);
+        requestAnimationFrame(animate);
+    }
+    animate();
+</script>
+</body>
+
+</html>
