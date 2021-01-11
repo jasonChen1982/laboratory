@@ -1,0 +1,338 @@
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html{
+	height:100%;
+	width:100%;
+	background-color: #000;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	height:100%;
+	width:100%;
+	background-color: #000;
+	font-family: 'Lato', serif;
+	font-weight: 300;
+	color: #fff;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: subpixel-antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+#viz, #webgl {
+	position:absolute;
+	background-color: #000;
+	width:100%;
+	height:100%;
+}
+
+a {
+	color: #fff;
+	text-decoration: none;
+	border-bottom:thin dotted #999;
+}
+
+#preloader{
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	top: 50%;
+	left: 50%;
+	margin-left: -20px;
+	margin-top:-20px;
+	background:url(../res/img/intro/loader.gif) center center no-repeat;
+	z-index: 999;
+}
+
+/* CONTROLS */
+
+#controls-holder{
+	position:absolute;
+	top: 0px;
+	right:0px;
+	height: 100%;
+	width:262px;
+	background-color: #241F25;
+	overflow-y:scroll;
+	overflow-x: hidden;
+	background-color: #000;
+	display:none;
+}
+
+#controls{
+	position:absolute;
+	width:250px;
+}
+
+#controls-header{
+	height: 49px;
+	border-bottom: 1px solid #333;
+	background-color: #000;
+}
+
+.audio-elem{
+	border-bottom: 1px solid #333;
+	width: 260px;
+	display:block;
+	margin-top:1px;
+}
+
+#debug-text{
+	font-size: 20px;
+	padding:0 15px;
+	line-height: 46px;
+}
+
+#bpm{
+	background-color: #000;
+	width: 250px;
+	height: 31px;
+	border-bottom: 1px solid #333;
+	line-height: 30px;
+	position:relative;
+}
+
+#bpm-text{
+	font-size: 12px;
+	position:absolute;
+	padding:0 15px;
+}
+
+#bpm-display{
+	position:absolute;
+	top:0;
+	right:0;
+	z-index: 99;
+	height:30px;
+	width:30px;
+	display:block;
+}
+
+#stats{
+	position:absolute;
+	background-color: #003;
+	right:0;
+	top:0;
+}
+
+#audio-debug{
+	background-color: #200;
+	right:0;
+	border-bottom: 1px solid #333;
+	width:250px;
+	height:101px;
+	display:block;
+}
+
+
+/* INTRO */
+
+#intro {
+	position:absolute;
+	left:50%;
+	top:50%;
+	width:602px;
+	height:400px;
+	margin-left:-300px;
+	margin-top: -200px;
+	z-index: 999;
+	display:none;
+	cursor: default;
+	letter-spacing: 1px;
+	text-align: center;
+}
+
+h1{
+	margin: 0;
+	height: 104px;
+	padding:0;
+	opacity: 0.9;
+}
+
+h2{
+	font-size: 24px;
+	margin: 20px 0 20px 0;
+}
+
+h3{
+	font-size: 16px;
+}
+
+.option{
+	display: inline-block;
+	width: 200px;
+	float:left;
+	height:180px;
+	border-left:thin dotted #999;
+}
+
+.option h3{
+
+	color: #DDD;
+	font-size: 20px;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 15px;
+	transition: color 0.2s;
+	padding-top:5px;
+}
+
+.clickable:hover h3{
+	color: #FFF;
+}
+
+.option .icon{
+	position: relative;
+	height: 60px;
+	width: 60px;
+	margin-left: 70px; 
+	margin-top:20px;
+	-webkit-transition: all 200ms cubic-bezier(0.19, 1, 0.22, 1);
+	transition:         all 200ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.clickable:hover .icon{
+	-ms-transform: scale(1.15); /* IE 9 */
+	-webkit-transform: scale(1.15); /* Safari */
+	transform: scale(1.15);
+	opacity: 1;
+}
+
+.icon.mic{
+	background-image: url(../res/img/intro/mic.svg);
+}
+
+.icon.mp3{
+	background-image: url(../res/img/intro/music.svg);
+}
+
+.icon.play{
+	background-image: url(../res/img/intro/controller-play.svg);
+}
+
+.option p{
+	font-size: 12px;
+	line-height: 130%;
+}
+
+.clickable{
+	cursor: pointer;
+}
+
+.option.lefty {
+	border-left:none
+}
+
+#prompt{
+	display: none;
+	font-size: 24px;
+	position:absolute;
+	text-align: center;
+	height:180px;
+	padding-top: 65px;
+	width: 100%;
+	color: #FFF;
+	font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+/* INFO BUTTON */
+
+.btn{
+	height: 30px;
+	width: 30px;
+	opacity:0.8;
+	-webkit-transition: all 600ms cubic-bezier(0.19, 1, 0.22, 1);
+	transition:         all 600ms cubic-bezier(0.19, 1, 0.22, 1);
+	top: 20px;
+	right: 20px;
+	position: absolute;
+	z-index: 9999;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-size: 30px 30px;
+}
+
+.btn:hover{
+	opacity:1;
+	-ms-transform: scale(1.1); /* IE 9 */
+	-webkit-transform: scale(1.1); /* Safari */
+	transform: scale(1.1);
+}
+
+.info-btn{
+	background-image: url(../res/img/intro/info-with-circle.svg);
+}
+
+.close-btn{
+	background-image: url(../res/img/intro/circle-with-cross.svg);
+	display:none;
+}
+
+/* INFO OVERLAY */
+
+#info{
+	position:absolute;
+	height:100%;
+	width: 100%;
+	background-color: #000;
+	background-color: rgba(0,0,0,0.6);
+	z-index: 999;
+	display:none;
+}
+
+#info-inner{
+	position:absolute;
+	left:50%;
+	top:50%;
+	width:620px;
+	height: 620px;
+	margin-left:-300px;
+	margin-top: -310px;
+	color: #CCC;
+	cursor: default;
+}
+
+#info-inner p, #info-inner li{
+	font-size: 15px;
+	line-height: 180%;
+	color:#FFF;
+	letter-spacing: 1px;
+}
+
+#info-inner h2, #info-inner h3{
+	font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin: 10px 0;
+}
+
+#info-inner h2{	
+	font-size: 26px;
+}
+
+#info-inner h3{	
+	font-size: 19px;
+}
+
+
+@media screen and (max-width: 620px) {
+    #intro, #info-inner {
+        -ms-transform: scale(0.6); 
+		-webkit-transform: scale(0.6);
+		transform: scale(0.6);
+    }
+}

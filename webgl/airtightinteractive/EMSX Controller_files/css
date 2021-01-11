@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/l/font?kit=KFOmCnqEu92Fr1Me4GZNCzcPPuHCpLp9T06CNmEmInCdHa5FYIsj&skey=a0a0114a1dcab3ac&v=v20) format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Roboto Medium'), local('Roboto-Medium'), url(https://fonts.gstatic.com/l/font?kit=KFOlCnqEu92Fr1MmEU9vBh0_IsHAgah-SkmHNWwpVAzhG6JJaQHa5s1u&skey=ee881451c540fdec&v=v20) format('woff2');
+}

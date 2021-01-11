@@ -1,0 +1,237 @@
+html{
+	height:100%;
+}
+
+
+body {
+
+	background-color: #333;
+	margin: 0;
+	overflow: hidden;
+	color: #fff;
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding:0;
+	height:100%;
+	background: linear-gradient(#111, #333);
+}
+
+#preloader{
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	top: 50%;
+	left: 50%;
+	margin-left: -20px;
+	margin-top:-20px;
+	background:url(loader.gif) center center no-repeat;
+}
+
+#viz {
+	position:absolute;
+	background-color: #000;
+	top: calc(50% - 400px);
+	left: calc(50% - 400px);
+}
+
+#webgl{
+	position: absolute;
+	width:800px;
+	height:800px;
+	box-shadow: 0px 0px 15px rgba(0,0,0,.5);
+}
+
+@font-face {
+    font-family: 'BDRouen';
+    src:url('../../res/fonts/bdrouen/BDRouen.ttf.woff') format('woff'),
+        url('../../res/fonts/bdrouen/BDRouen.ttf.svg#BDRouen') format('svg'),
+        url('../../res/fonts/bdrouen/BDRouen.ttf.eot'),
+        url('../../res/fonts/bdrouen/BDRouen.ttf.eot?#iefix') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#text-test{
+	font-family: 'BDRouen';
+	position: absolute;
+	width: 500px;
+	height: 40px;
+	top: 50%;
+	left: 50%;
+	margin-left: -250px;
+	margin-top:-20px;
+	font-size: 64px;
+	text-align: center;
+	text-shadow: 0px 0px 15px rgba(0,0,0,.5);
+}
+
+
+/* CONTROLS */
+#controls-holder{
+	position:absolute;
+	top: 0px;
+	right:0px;
+	height: 100%;
+	width:262px;
+	background-color: #241F25;
+	overflow-y:scroll;
+	overflow-x: hidden;
+	background-color: #000;
+	display:none;
+}
+
+#controls{
+	position:absolute;
+	width:250px;
+	height:100%;
+	xdisplay:none;
+}
+
+#debugText{
+	font-weight: 100;
+	font-size: 24px;
+	background-color: #000;
+	height: 48px;
+	padding:0 15px;
+	border-bottom: 1px solid #333;
+	line-height: 48px;
+}
+
+#bpmText{
+	background-color: #000;
+	width: 250px;
+	height: 30px;
+	padding:0 15px;
+	font-size: 12px;
+	border-bottom: 1px solid #333;
+	line-height: 30px;
+}
+
+#bpmDisplay{
+	position:absolute;
+	top:48px;
+	background-color: #030;
+	width: 30px;
+	height: 30px;
+	right:0;
+	border-bottom: 1px solid #333;
+	z-index: 99;
+}
+
+#stats{
+	position:absolute;
+	background-color: #003;
+	right:0;
+	top:0;
+}
+
+#audioElem{
+	border-bottom: 1px solid #333;
+}
+
+#audioDebug{
+	background-color: #200;
+	width: 250px;
+	height: 100px;
+	right:0;
+	border-bottom: 1px solid #333;
+}
+
+#settings{
+	xposition:absolute;
+	background-color: #003;
+	xtop: 248px;
+}
+
+/* INFO */
+
+#info{
+	font-family: 'BDRouen';
+	position:absolute;
+	left: 20px;
+	bottom: 10px;
+	line-height: 20px;
+	font-size: 14px;
+	display:none;
+	color: #eee;
+}
+
+a {
+	color: #fff;
+	text-decoration: none;
+	border-bottom:thin dotted #fff;
+}
+
+/* INTRO */
+#intro {
+	font-family: 'BDRouen';
+	width:800px;
+	height:400px;
+	position:absolute;
+	padding: 200px 20px;
+	background-color: #111;
+	text-align: center;
+	cursor:default;
+	z-index: 999;
+	text-shadow: 0px 0px 10px rgba(0,0,0,.5);
+}
+
+h1{
+	font-size: 66px;
+	margin:0;
+}
+
+h2{
+	font-size: 36px;
+}
+
+h3{
+	font-size: 20px;
+}
+
+#intro p{
+	font-size: 16px;
+}
+
+.option{
+	display: inline-block;
+	width: 180px;
+}
+
+.clickable{
+	cursor: pointer;
+}
+
+#intro ul{
+	padding:0px;
+	margin:0px;
+	margin-left:-20px;
+
+}
+
+#intro li {
+	display:inline-block;
+	list-style-type:none; 
+	padding-left:10px;
+	margin-left:10px;
+	border-left:thin dotted #fff;
+}
+#intro li:first-child {
+	border-left:none
+}
+
+#play-btn {
+	text-align: center;
+	margin:auto;
+	width: 100px;
+	height:100px;
+	bottom:50px;
+	cursor: pointer;
+	background-image: url(play.png);
+}
+
+#warning{
+	display: none;
+	font-size: 26px;
+	color: #FFA500;
+}

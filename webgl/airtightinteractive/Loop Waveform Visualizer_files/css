@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Lobster';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lobster Regular'), local('Lobster-Regular'), url(https://fonts.gstatic.com/l/font?kit=neILzCirqoswsqX9_oCsNKEyYoW5_yR_wE3jreBBDsHEGR-R&skey=7ed805a363b4659c&v=v22) format('woff2');
+}

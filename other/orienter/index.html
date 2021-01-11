@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <title>orienter</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      background-color: #41b882;
+    }
+
+    .face-posture {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 320px;
+      height: 320px;
+      margin-top: -160px;
+      margin-left: -160px;
+      background: #5115fd;
+      border-radius: 50%;
+      perspective: 320px;
+    }
+
+    .face-posture:before,
+    .face-posture:after {
+      position: absolute;
+      content: '';
+      top: 50%;
+      width: 100%;
+      border-bottom: 1px dashed #fff;
+      pointer-events: none;
+    }
+
+    .face-posture:after {
+      transform: rotate(90deg);
+    }
+
+    .face-group {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-style: preserve-3d;
+      transform: translateZ(-160px) rotateX(90deg);
+      z-index: 1;
+    }
+
+    .face-group span {
+      position: absolute;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    .face-group span:nth-child(1) {
+      width: 160px;
+      height: 320px;
+      margin-left: -80px;
+      margin-top: -160px;
+      background: #fff;
+      border: 6px solid #ccc;
+      transform: translateZ(10px);
+      line-height: 320px;
+      text-align: center;
+      font-size: 120px;
+      font-weight: bold;
+      color: #ccc;
+    }
+
+    .face-group span:nth-child(2) {
+      width: 20px;
+      height: 320px;
+      margin-left: -10px;
+      margin-top: -160px;
+      background: #ddd;
+      transform: translateX(80px) rotateY(90deg);
+    }
+
+    .face-group span:nth-child(3) {
+      width: 20px;
+      height: 320px;
+      margin-left: -10px;
+      margin-top: -160px;
+      background: #999;
+      transform: translateX(-80px) rotateY(-90deg);
+    }
+
+    .face-group span:nth-child(4) {
+      width: 160px;
+      height: 20px;
+      margin-left: -80px;
+      margin-top: -10px;
+      background: #bbb;
+      transform: translateY(-160px) rotateX(90deg);
+    }
+
+    .face-group span:nth-child(5) {
+      width: 160px;
+      height: 20px;
+      margin-left: -80px;
+      margin-top: -10px;
+      background: #777;
+      transform: translateY(160px) rotateX(-90deg);
+    }
+
+    .face-group span:nth-child(6) {
+      width: 160px;
+      height: 320px;
+      margin-left: -80px;
+      margin-top: -160px;
+      background: #fff;
+      transform: translateZ(-10px);
+    }
+
+    #euler {
+      position: absolute;
+      width: 100%;
+      background-color: #fff;
+    }
+
+  </style>
+  <script src="./api.js"></script>
+  <script src="//image.uc.cn/s/uae/g/0n/test/vconsole.min.js"></script>
+  <script>
+    // init vConsole
+    var vConsole = new VConsole();
+    window.onload = function() {
+      document.querySelector('.vc-switch').setAttribute('style', 'font-size:12px !important');
+      document.querySelector('.vc-mask').setAttribute('style', 'font-size:12px !important');
+      document.querySelector('.vc-panel').setAttribute('style', 'font-size:12px !important');
+    };
+  </script>
+</head>
+<body>
+  <div class="face-posture">
+    <div id="phone" class="face-group">
+      <span>G</span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div id="euler"></div>
+  <script>
+    /**
+     * euclidean modulo
+     * @function
+     * @param {Number} n input value
+     * @param {Number} m modulo
+     * @return {Number} re-map to modulo area
+     */
+    function euclideanModulo(n, m) {
+      return ((n % m) + m) % m;
+    }
+
+    function isIOS() {
+      console.log(navigator.platform);
+      return /iPad|iPhone|iPod/i.test(navigator.platform);
+    }
+    function isUC() {
+      console.log(navigator.userAgent);
+      return /ucbrowser/i.test(navigator.userAgent);
+    }
+    var inIOS = isIOS();
+    var inUC = isUC();
+
+
+    var iphoneDom = document.querySelector('#phone');
+    var eulerDom = document.querySelector('#euler');
+    var direction = 0;
+
+    function setEuler(euler) {
+      iphoneDom.style.transform = `translateZ(-160px) rotateY(${euler.alpha}deg) rotateX(${-euler.beta}deg) rotateZ(${euler.gamma}deg) rotateX(90deg)`;
+    }
+
+    var needFixed = true;
+    var discard = 1;
+    var initAlpha = 0;
+    function onDeviceChange(ev) {
+      if (needFixed) {
+        if (discard > 0) {
+          discard--;
+          return;
+        }
+        initAlpha = event.alpha;
+        needFixed = false;
+      }
+      var euler = {
+        alpha: euclideanModulo(event.alpha - initAlpha, 360),
+        beta: event.beta,
+        gamma: event.gamma,
+      };
+      eulerDom.innerHTML = `
+      <p>e_alpha: ${event.alpha}</p>
+      <p>i_alpha: ${initAlpha}</p>
+      <p>alpha: ${euler.alpha}</p>
+      <p>beta: ${euler.beta}</p>
+      <p>gamma: ${euler.gamma}</p>
+      <p>orientation: ${orientation}</p>
+      `;
+      console.log('aaa', euler);
+      setEuler(euler);
+    }
+
+    function onOrientationChange() {
+      direction = window.orientation || 0;
+    }
+
+    console.log(window.ucapi);
+
+    window.addEventListener('deviceorientation', onDeviceChange, false);
+    window.removeEventListener('orientationchange', onOrientationChange, false);
+
+    console.log('pre check');
+    if (inUC && inIOS) {
+      console.log('pre startWatchOrientation');
+      if (window.ucapi && window.ucapi.invoke) {
+        console.log('post startWatchOrientation');
+        ucapi.invoke('device.stopWatchOrientation', { interval: 0.02 });
+        setTimeout(function() {
+          ucapi.invoke('device.startWatchOrientation', { interval: 0.02 });
+        }, 300);
+      }
+    }
+  </script>
+</body>
+
+</html>

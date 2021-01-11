@@ -1,0 +1,188 @@
+html, body, div, canvas {
+	margin: 0;
+	padding: 0;
+}
+
+html{
+	height:100%;
+}
+
+body {
+	margin: 0;
+	overflow: hidden;
+	color: #fff;
+	font-family: 'Lato', "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-weight: 300;
+	font-size: 12px;
+	padding:0;
+	height:100%;
+	background-color: #000;
+
+	 -webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+#info-btn{
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 100px;
+	height: 40px;
+	line-height: 40px;
+	border: 1px solid #AAA;
+	text-align: center;
+	font-size: 14px;
+	xborder-radius: 2px;
+	cursor: pointer;
+	z-index: 3;
+	color: #DDD;
+
+}
+
+#info-btn:hover{
+
+	background-color: #FFF;
+	color: #000;
+}
+
+#info-panel{
+
+	position: absolute;
+	
+	width: 500px;
+	height:450px;
+	line-height: 180%;
+	font-size: 16px;
+	top: 50%;
+	left: 50%;
+	margin-left: -250px;
+	margin-top: -225px;
+
+	z-index: 2;
+	letter-spacing: 0.8px;
+	xborder: 1px solid #666;
+	xborder-radius: 2px;
+	xpadding: 30px 60px;
+	display: none;
+	font-weight: 100;
+	xbackground-color: rgba(0,0,0,0.8);
+
+
+
+
+}
+
+h1 {
+	letter-spacing: 2px;
+	xtext-transform: uppercase;
+	color: #DDD;
+	font-weight: 100;
+	font-size: 50px;
+
+}
+
+#overlay{
+	position: absolute;
+	width: 100%;
+	height:100%;
+	background-color: rgba(0,0,0,0.8);
+	z-index: 1;
+	display: none;
+
+
+}
+
+#track-title{
+	font-size: 24px;
+	margin:0;
+	font-weight: 100;
+	position:absolute;
+	top:20px;
+	left:20px;
+	letter-spacing: 1px;
+	height:40px;
+}
+
+#logo{
+	position:absolute;
+	bottom:20px;
+	left: 20px;
+	width:81px;
+	height:33px;
+	background-image: url('../res/img/splice-logo.png'); 
+}
+
+#audio-container {
+	text-align: center;
+	position:absolute;
+	width:100%;
+	bottom:10px;
+	height:40px;
+}
+
+#audio-elem{
+	width:400px;
+	z-index:999;
+}
+
+#debug-text{
+	position:absolute;
+	top:0;
+	color:#00FF00;
+	width:400px;
+	z-index:99;
+	font-size:20px;
+	height:30px;
+}
+
+#play-btn{
+	position:absolute;
+	margin: auto;
+	top:0;
+	bottom: 0;
+	left:0;
+	right: 0;
+	width:200px;
+	height:200px;
+	background-image: url('../res/img/play-btn.png'); 
+	cursor: pointer;
+}
+
+.linkr{
+	position:absolute; 
+	width:100%;
+	height:100%;
+	top:0;
+	left: 0;
+	z-index: 1;
+}
+
+a{
+	color: #fff;
+	xtext-decoration: none;
+	text-decoration: none;
+	border-bottom:thin solid #ccc;
+}
+
+@media screen and (max-width: 620px) {
+	#info-panel {
+		-ms-transform: scale(0.7); 
+		-webkit-transform: scale(0.7);
+		transform: scale(0.7);
+	}
+
+	#track-title {
+		font-size: 16px;
+	}
+
+	#logo {
+		bottom: 80px;
+	}
+}
+
+

@@ -1,0 +1,178 @@
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+hml, body, div, canvas {
+    margin: 0;
+    padding: 0;
+}
+
+html{
+	height:100%;
+}
+
+body {
+
+	margin: 0;
+	overflow: hidden;
+	color: rgba(255,255,255,.8);
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding:0;
+	height:100%;
+	background-color: #111;
+	background: linear-gradient(#000, #222);
+
+}
+
+#preloader{
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	top: 50%;
+	left: 50%;
+	margin-left: -20px;
+	margin-top:-20px;
+	background:url(loader.gif) center center no-repeat;
+}
+
+#viz {
+	position:absolute;
+	background-color: #000;
+	width:100%;
+	height:100%;
+}
+
+#webgl{
+	position: absolute;
+	xopacity:.5;
+	background-color: #000;
+	width:100%;
+	height:100%;
+	box-shadow: 0px 0px 15px rgba(0,0,0,.5);
+
+}
+
+/* CONTROLS */
+#controls-holder{
+	position:absolute;
+	top: 0px;
+	right:0px;
+	height: 100%;
+	width:262px;
+	background-color: #241F25;
+	overflow-y:scroll;
+	overflow-x: hidden;
+	background-color: #000;
+	display:none;
+}
+
+#controls{
+	position:absolute;
+	width:250px;
+	height:100%;
+}
+
+#controls-header{
+	height: 49px;
+	border-bottom: 1px solid #333;
+	background-color: #000;
+}
+
+#debugText{
+	font-weight: 100;
+	font-size: 22px;
+	padding:0 10px;
+	line-height: 46px;
+}
+
+#stats{
+	position:absolute;
+	background-color: #003;
+	right:0;
+	top:0;
+}
+
+#audioElem{
+	border-bottom: 1px solid #333;
+	height:30px;
+	width: 262px;
+	display:block;
+	margin-top:1px;
+}
+
+#audioDebug{
+	background-color: #200;
+	right:0;
+	border-bottom: 1px solid #333;
+	width:250px;
+	height:101px;
+	display:block;
+}
+
+#settings{
+	xposition:absolute;
+	background-color: #003;
+	xtop: 248px;
+}
+
+/* INFO */
+
+#info-left{
+	position:absolute;
+	left: 20px;
+	bottom: 10px;
+	line-height: 20px;
+}
+
+#info-right{
+	position:absolute;
+	right: 20px;
+	bottom: 10px;
+	line-height: 20px;
+}
+
+#info-center{
+	position:absolute;
+	margin: 0 auto;
+	right: 0; left:0;
+	width:200px;
+	bottom: 10px;
+	line-height: 20px;
+	display: none;
+}
+
+/* INTRO */
+
+#play-btn {
+
+	width:400px;
+	height:400px;
+	z-index: 999;
+	margin: auto;
+  	position: absolute;
+  	top: 0; left: 0; bottom: 0; right: 0;
+  	cursor: pointer;
+}
+
+#prompt{
+	display: none;
+	font-size: 30px;
+	position:absolute;
+	width:800px;
+	height:150px;
+	margin: auto;
+  	position: absolute;
+  	top: 0; left: 0; bottom: 0; right: 0;
+	text-align: center;
+}
+
+a {
+	color:#FFF;
+	text-decoration: none;
+	border-bottom:thin dotted #FFF;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!-- saved from url=(0030)https://uberviz.io/viz/splice/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Splice Visualizer</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=0">
+	<link href="./Splice Visualizer_files/css" rel="stylesheet" type="text/css">
+	<link href="./Splice Visualizer_files/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+	<div id="info-btn">ABOUT</div>
+
+	<div id="overlay"></div>
+
+	<div id="info-panel">
+
+		<h1>Splice Visualizer</h1>
+		
+		<p> A realtime interactive music visualizer, using time-code data from <a href="http://splice.com/">Splice</a>'s upcoming visualizer API. This data enables tightly synced visuals that perfectly align to the beats of the song.</p>
+
+		<p>Use the mouse to move the camera and use the audio controls to skip around the song. Visuals are randomized to give a different experience with each viewing.</p>
+
+		<p>Music is <a href="https://splice.com/henryfong/henry-fong-j-trick-scream-original-mix">Henry Fong &amp; J-Trick - Scream (Original Mix)</a>.</p>
+
+		<p>Built with Three.js, GSAP, WebGL and Web Audio API.</p>
+
+		<p>Built by <a href="http://www.uberviz.io/">ÜberViz</a>.</p>
+
+	</div>
+
+	<div id="play-btn"></div>
+	
+	<div id="track-title">Henry Fong &amp; J-Trick - Scream</div>
+	
+	<div id="logo">
+		<a href="http://www.splice.com/"><span class="linkr"></span></a>
+	</div>
+	
+	<div id="debug-text"></div>
+	<div id="audio-container">
+		<audio id="audio-elem" controls="controls" preload="auto" src="res/scream/scream.mp3" autoplay="autoplay"></audio>
+	</div>
+
+	<!-- lib -->
+	<script src="./Splice Visualizer_files/minivents.min.js"></script>
+	<script src="./Splice Visualizer_files/SimplexNoise.js"></script>
+	<script src="./Splice Visualizer_files/zepto.min.js"></script>
+	<script src="./Splice Visualizer_files/atutil.js"></script>
+	<script src="./Splice Visualizer_files/TweenMax.min.js"></script>
+	<script src="./Splice Visualizer_files/three.min.js"></script>
+	<script src="./Splice Visualizer_files/stats.min.js"></script>
+	
+	<!-- postproc -->
+	<script src="./Splice Visualizer_files/EffectComposer.js"></script>
+	<script src="./Splice Visualizer_files/RenderPass.js"></script>
+	<script src="./Splice Visualizer_files/MaskPass.js"></script>
+	<script src="./Splice Visualizer_files/ShaderPass.js"></script>
+	<script src="./Splice Visualizer_files/RGBShiftShader.js"></script>
+	<script src="./Splice Visualizer_files/CopyShader.js"></script>
+	<script src="./Splice Visualizer_files/FXAAShader.js"></script>
+	
+	<script src="./Splice Visualizer_files/BarrelBlurShader.js"></script>
+	<script src="./Splice Visualizer_files/LinesShader.js"></script>
+	<script src="./Splice Visualizer_files/ShakeShader.js"></script>
+	<script src="./Splice Visualizer_files/HueSaturationShader.js"></script>
+
+
+	<!-- src -->
+	<script src="./Splice Visualizer_files/SuperShader.js"></script>
+	<script src="./Splice Visualizer_files/AudioHandler.js"></script>
+	<script src="./Splice Visualizer_files/FXHandler.js"></script>
+	<script src="./Splice Visualizer_files/Sequence.js"></script>
+	<script src="./Splice Visualizer_files/SequenceHandler.js"></script>
+	
+	<script src="./Splice Visualizer_files/Stars.js"></script>
+	<script src="./Splice Visualizer_files/ClipBoxes.js"></script>
+	<script src="./Splice Visualizer_files/Rails.js"></script>
+	<script src="./Splice Visualizer_files/ClipBox.js"></script>
+	<script src="./Splice Visualizer_files/Ribbon.js"></script>
+	<script src="./Splice Visualizer_files/Tubes.js"></script>
+	<script src="./Splice Visualizer_files/SkyBox.js"></script>
+	<script src="./Splice Visualizer_files/SpliceViz.js"></script>
+	<script src="./Splice Visualizer_files/LightLeak.js"></script>
+	<script src="./Splice Visualizer_files/SpliceMain.js"></script>
+
+
+
+
+<canvas width="3584" height="1874" style="width: 1792px; height: 937px;"></canvas></body></html>
