@@ -183,37 +183,27 @@
     function setEuler(euler) {
       matrix.reset();
       matrix.rotateX(90 * DTR).rotateX(-euler.beta * DTR).rotateZ(euler.gamma * DTR).rotateY(euler.alpha * DTR);
-      console.log(matrix.applyToPoint(0, 0, 1));
-      iphoneDom.style.transform = `translateZ(-200px) ${matrix.toCSS()}`;
-      // iphoneDom.style.transform = `translateZ(-160px) rotateY(${euler.alpha}deg) rotateZ(${euler.gamma}deg) rotateX(${-euler.beta}deg) rotateX(90deg)`;
-    }
+      
+      var deviceVector = matrix.applyToPoint(0, 0, 1);
+      var length = Math.sqrt(deviceVector.x*deviceVector.x + deviceVector.z*deviceVector.z);
+      var latitude = Math.acos(deviceVector.y) / DTR;
+      var longitude = Math.sign(deviceVector.x) * Math.acos(deviceVector.z / length) / DTR;
 
-    var needFixed = false;
-    var discard = 1;
-    var initAlpha = 0;
-    function onDeviceChange(ev) {
-      if (needFixed) {
-        if (discard > 0) {
-          discard--;
-          return;
-        }
-        initAlpha = event.alpha;
-        needFixed = false;
-      }
-      var euler = {
-        alpha: event.alpha,// euclideanModulo(event.alpha - initAlpha, 360),
-        beta: event.beta,
-        gamma: event.gamma,
-      };
+      iphoneDom.style.transform = `translateZ(-200px) ${matrix.toCSS()}`;
+
       eulerDom.innerHTML = `
-      <p>e_alpha: ${event.alpha}</p>
-      <p>i_alpha: ${initAlpha}</p>
       <p>alpha: ${euler.alpha}</p>
       <p>beta: ${euler.beta}</p>
       <p>gamma: ${euler.gamma}</p>
       <p>orientation: ${orientation}</p>
+      <p>latitude: ${latitude}</p>
+      <p>longitude: ${euclideanModulo(longitude, 360)}</p>
       `;
-      setEuler(euler);
+      // iphoneDom.style.transform = `translateZ(-160px) rotateY(${euler.alpha}deg) rotateZ(${euler.gamma}deg) rotateX(${-euler.beta}deg) rotateX(90deg)`;
+    }
+
+    function onDeviceChange(event) {
+      setEuler(event);
     }
 
     function onOrientationChange() {
