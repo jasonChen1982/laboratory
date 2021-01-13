@@ -26,7 +26,7 @@
       margin-left: -160px;
       background: #5115fd;
       border-radius: 50%;
-      perspective: 320px;
+      perspective: 640px;
     }
 
     .face-posture:before,
@@ -64,7 +64,7 @@
       margin-left: -80px;
       margin-top: -160px;
       background: #fff;
-      border: 6px solid #ccc;
+      border: 6px solid #333;
       transform: translateZ(10px);
       line-height: 320px;
       text-align: center;
@@ -126,6 +126,7 @@
 
   </style>
   <script src="./api.js"></script>
+  <script src="./matrix.js"></script>
   <script src="//image.uc.cn/s/uae/g/0n/test/vconsole.min.js"></script>
   <script>
     // init vConsole
@@ -177,11 +178,17 @@
     var eulerDom = document.querySelector('#euler');
     var direction = 0;
 
+    var matrix = new Matrix();
+    var DTR = Math.PI / 180;
     function setEuler(euler) {
-      iphoneDom.style.transform = `translateZ(-160px) rotateY(${euler.alpha}deg) rotateX(${-euler.beta}deg) rotateZ(${euler.gamma}deg) rotateX(90deg)`;
+      matrix.reset();
+      matrix.rotateX(90 * DTR).rotateX(-euler.beta * DTR).rotateZ(euler.gamma * DTR).rotateY(euler.alpha * DTR);
+      console.log(matrix.applyToPoint(0, 0, 1));
+      iphoneDom.style.transform = `translateZ(-200px) ${matrix.toCSS()}`;
+      // iphoneDom.style.transform = `translateZ(-160px) rotateY(${euler.alpha}deg) rotateZ(${euler.gamma}deg) rotateX(${-euler.beta}deg) rotateX(90deg)`;
     }
 
-    var needFixed = true;
+    var needFixed = false;
     var discard = 1;
     var initAlpha = 0;
     function onDeviceChange(ev) {
@@ -194,7 +201,7 @@
         needFixed = false;
       }
       var euler = {
-        alpha: euclideanModulo(event.alpha - initAlpha, 360),
+        alpha: event.alpha,// euclideanModulo(event.alpha - initAlpha, 360),
         beta: event.beta,
         gamma: event.gamma,
       };
@@ -206,7 +213,6 @@
       <p>gamma: ${euler.gamma}</p>
       <p>orientation: ${orientation}</p>
       `;
-      console.log('aaa', euler);
       setEuler(euler);
     }
 
