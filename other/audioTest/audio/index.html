@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        * {
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            padding-top: 100px;
+        }
+        p {
+            color: #333;
+        }
+        .button1, .button2 {
+            width: 100px;
+            height: 30px;
+            margin: 0 auto 30px;
+            background: #a78;
+            text-align: center;
+            line-height: 30px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="button1">同步播放</div>
+        <div class="button2">异步播放</div>
+        <a href="https://www.baidu.com">外部链接</a>
+        <audio id="audioDom" src="https://image.uc.cn/s/uae/g/3o/broccoli/resource/202008/f5b262ef95c80823.mp3"/>
+    <script>
+        var audioDom = document.querySelector('#audioDom');
+
+        document.querySelector('.button1').addEventListener('click', function() {
+            audioDom.play();
+        });
+        document.querySelector('.button2').addEventListener('click', function() {
+            setTimeout(() => {
+                audioDom.play();
+            }, 200);
+        });
+    </script>
+    </body>
+</html>

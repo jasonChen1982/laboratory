@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        * {
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            padding-top: 100px;
+        }
+        p {
+            color: #333;
+        }
+        .button1, .button2 {
+            width: 100px;
+            height: 30px;
+            margin: 0 auto 30px;
+            background: #a78;
+            text-align: center;
+            line-height: 30px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="button1">同步播放</div>
+        <div class="button2">异步播放</div>
+        <a href="https://www.baidu.com">外部链接</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.js" integrity="sha512-J+vDCDlH9TYo4uL0R5g9TCvJj8oGATXWi17AcOyUhuyEbJf0SF5HSmKv1gwPCEowauPanV0RAaYjyU+kbowtQg==" crossorigin="anonymous"></script>
+    <script>
+        var music = new Howl({
+            src: [ 'https://image.uc.cn/s/uae/g/3o/broccoli/resource/202008/f5b262ef95c80823.mp3' ],
+        });
+
+        document.querySelector('.button1').addEventListener('click', function() {
+            music.play();
+        });
+        document.querySelector('.button2').addEventListener('click', function() {
+            setTimeout(() => {
+                music.play();
+            }, 200);
+        });
+    </script>
+    </body>
+</html>
