@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/jasonChen1982/labratory#readme",
   "devDependencies": {
-    "http-server": "^0.10.0"
+    "http-server": "^14.1.1"
   }
 }
